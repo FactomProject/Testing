@@ -1,0 +1,3 @@
+#!/bin/bash
+
+factom-cli mkchain -e level1 -e level2 <~/testing/test-plans-and-scripts/chain/1st-entry

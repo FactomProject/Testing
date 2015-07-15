@@ -1,0 +1,9 @@
+#3019215269500000000
+#3019215269750000000
+echo
+factom-cli newtransaction transaction101
+factom-cli addinput transaction101 factoid-wallet-address-name03 1519215200000000000
+factom-cli sign transaction101
+factom-cli submit transaction101
+factom-cli balance fct factoid-wallet-address-name03
+
