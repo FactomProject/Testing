@@ -353,12 +353,13 @@ echo 3.1 MAKE A CHAIN
 echo
 echo 3.1.1 TRY TO MAKE CHAIN USING NON-EXISTENT ENTRY CREDIT ADDRESS
 echo
+echo Proposed New Chain ID
 CHAINID=$(factom-cli mkchain -e 111111 -e 222222 xxx <~/testing/testing/test-plans-and-scripts/entries/1st-entry | awk '{print $3}')
-echo New Chain ID
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
+echo Chain Head Merkelroot
 HEAD=$(factom-cli get chain $CHAINID)
 echo $HEAD
 factom-cli balance ec xxx
@@ -367,12 +368,13 @@ echo
 echo 3.1.2 MAKE CHAIN USING ENTRY CREDIT ADDRESS NAME
 echo
 factom-cli balance ec ec-wallet-address-name01
+echo Proposed New Chain ID
 CHAINIDGOOD=$(factom-cli mkchain -e 111111 -e 222222 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/entries/1st-entry | awk '{printf $3}')
-echo New Chain ID
 echo $CHAINIDGOOD
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
+echo Chain Head Merkelroot
 HEADGOOD=$(factom-cli get chain $CHAINIDGOOD)
 echo $HEADGOOD
 factom-cli balance ec ec-wallet-address-name01
@@ -381,11 +383,13 @@ echo
 echo 3.1.3 MAKE CHAIN THAT ALREADY EXISTS
 echo
 factom-cli balance ec ec-wallet-address-name01
+echo Proposed New Chain ID
 CHAINID=$(factom-cli mkchain -e 111111 -e 222222 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/entries/1st-entry | awk '{printf $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
+echo Chain Head Merkelroot
 HEAD=$(factom-cli get chain $CHAINID)
 echo $HEAD
 factom-cli balance ec ec-wallet-address-name01
@@ -393,11 +397,13 @@ echo
 
 echo 3.1.4 MAKE SAME CHAIN USING DIFFERENT EXTERNAL ID
 echo
+echo Proposed New Chain ID
 CHAINID=$(factom-cli mkchain -e 111111 -e 222222 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/entries/2nd-entry | awk '{printf $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
+echo Chain Head Merkelroot
 HEAD=$(factom-cli get chain $CHAINID)
 echo $HEAD
 factom-cli balance ec $ECWALLETADDRESSKEY01
@@ -407,17 +413,19 @@ echo 3.1.5 MAKE CHAIN USING A ENTRY CREDIT ADDRESS KEY
 echo
 HOUR=$( date +%H )
 MINUTE=$( date +%M )
+echo Proposed New Chain ID
 CHAINID=$(factom-cli mkchain -e $HOUR -e $MINUTE $ECWALLETADDRESSKEY01 <~/testing/testing/test-plans-and-scripts/entries/1st-entry | awk '{printf $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
+echo Chain Head Merkelroot
 HEAD=$(factom-cli get chain $CHAINID)
 echo $HEAD
 factom-cli balance ec $ECWALLETADDRESSKEY01
 echo
 
-echo 3.2 TRACE ENTRY BLOCK CHAIN
+echo 3.2 SHOW ENTRY BLOCK CHAIN
 ENTRYKEYMERKELROOT=$HEADGOOD
 until [ "$ENTRYKEYMERKELROOT" =  '0000000000000000000000000000000000000000000000000000000000000000' -o "$ENTRYKEYMERKELROOT" = "" ]; do
     RESULT=$(factom-cli get eblock $ENTRYKEYMERKELROOT)
@@ -453,14 +461,15 @@ until [ "$ENTRYKEYMERKELROOT" =  '0000000000000000000000000000000000000000000000
 done
 echo
 
-echo 3.2 ENTRY
-echo 3.2.1 PUT ENTRY
+echo 3.3 ADD ENTRY TO CHAIN
 factom-cli put -e 333333 -e 444444 -c $CHAINIDGOOD ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/entries/2nd-entry
-HEADGOOD=$(factom-cli get chain $CHAINIDGOOD)
 echo Chain Head Merkelroot
+echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
+sleep 60
+HEADGOOD=$(factom-cli get chain $CHAINIDGOOD)
 echo $HEADGOOD
 
-echo 3.2 TRACE ENTRY BLOCK CHAIN
+echo 3.4 TRACE EXTENDED ENTRY BLOCK CHAIN
 ENTRYKEYMERKELROOT=$HEADGOOD
 until [ "$ENTRYKEYMERKELROOT" =  '0000000000000000000000000000000000000000000000000000000000000000' -o "$ENTRYKEYMERKELROOT" = "" ]; do
     RESULT=$(factom-cli get eblock $ENTRYKEYMERKELROOT)
@@ -497,7 +506,7 @@ done
 echo
 
 #'s/[{}]//g'  | sed 's/^.//'  | sed 's/.$//'
-echo 3.3  TRACE DIRECTORY BLOCK CHAIN
+echo 3.5  TRACE DIRECTORY BLOCK CHAIN
 HEAD=$(factom-cli get head)
 echo $HEAD
 DIRECTORYKEYMERKELROOT=$HEAD

@@ -1,9 +1,0 @@
-[
-    {
-      "first"   : "trevor",
-      "last"    : "wellington",
-      "from"    : "england",
-      "age"     : 52,
-      "sports"  : [ "rugby", "badmitton", "snooker" ]
-    }
-  ]
