@@ -14,15 +14,84 @@ echo
 FACTOIDWALLETADDRESSKEY02=$(factom-cli generateaddress fct factoid-wallet-address-name02 | awk '{print $3}')
 echo factoid-wallet-address-name02 = $FACTOIDWALLETADDRESSKEY02
 echo 
-echo 1.1.1.2 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH '"$"'        
-factom-cli generateaddress fct '$F01'
-echo 
-echo 1.1.1.3 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH '"/"'        
-factom-cli generateaddress fct "'/F02'"
-echo 
-echo 1.1.1.4 TRY TO CREATE TOO LONG FACTOID WALLET ADDRESS NAME       
+echo 1.1.1.2 TRY TO CREATE TOO LONG FACTOID WALLET ADDRESS NAME       
 factom-cli generateaddress fct factoid-wallet-address-name890123
 echo
+echo 1.1.1.3 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH '"$"'        
+factom-cli generateaddress fct '$F01'
+echo 
+echo 1.1.1.4 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH '"/"'        
+factom-cli generateaddress fct "'/F02'"
+echo 
+echo 1.1.1.5 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING '"~"'        
+factom-cli generateaddress fct "'F~02'"
+echo 
+echo 1.1.1.6 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH '"~"'        
+factom-cli generateaddress fct "'F02!'"
+echo 
+echo 1.1.1.7 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH "@"        
+factom-cli generateaddress fct "'@F02'"
+echo 
+echo 1.1.1.8 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "#"        
+factom-cli generateaddress fct "'F#02'"
+echo 
+echo 1.1.1.9 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH "%"        
+factom-cli generateaddress fct "'F02%'"
+echo 
+echo 1.1.1.10 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH "^"        
+factom-cli generateaddress fct "'^F02'"
+echo 
+echo 1.1.1.11 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "&"        
+factom-cli generateaddress fct "'F&02'"
+echo 
+echo 1.1.1.12 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH "*"        
+factom-cli generateaddress fct "'F02*'"
+echo 
+echo 1.1.1.13 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "()"        
+factom-cli generateaddress fct "'(F02)'"
+echo 
+echo 1.1.1.14 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH "+"        
+factom-cli generateaddress fct "'+F02'"
+echo 
+echo 1.1.1.15 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "="        
+factom-cli generateaddress fct "'F=02'"
+echo 
+echo 1.1.1.16 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "{}"        
+factom-cli generateaddress fct "'{F02}'"
+echo 
+echo 1.1.1.17 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "[]"        
+factom-cli generateaddress fct "'[F02]'"
+echo 
+echo 1.1.1.18 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH "|"        
+factom-cli generateaddress fct "'F02|'"
+echo 
+echo 1.1.1.19 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH ":"        
+factom-cli generateaddress fct "':F02'"
+echo 
+echo 1.1.1.20 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING ";"        
+factom-cli generateaddress fct "'F;02'"
+echo 
+echo 1.1.1.21 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH """        
+factom-cli generateaddress fct "F02\""
+echo " 
+echo 1.1.1.22 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH "'"        
+factom-cli generateaddress fct "''F02'"
+echo 
+echo 1.1.1.23 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "<"        
+factom-cli generateaddress fct "'F<02'"
+echo 
+echo 1.1.1.24 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH ","        
+factom-cli generateaddress fct "'F02,'"
+echo 
+echo 1.1.1.25 TRY TO CREATE FACTOID WALLET ADDRESS NAME STARTING WITH ">"        
+factom-cli generateaddress fct "'>F02'"
+echo 
+echo 1.1.1.26 TRY TO CREATE FACTOID WALLET ADDRESS NAME CONTAINING "."        
+factom-cli generateaddress fct "'F.02'"
+echo 
+echo 1.1.1.27 TRY TO CREATE FACTOID WALLET ADDRESS NAME ENDING WITH "?"        
+factom-cli generateaddress fct "'F02?'"
+echo 
 
 echo 1.1.2 GET FACTOID WALLET ADDRESS BALANCES        
 echo
