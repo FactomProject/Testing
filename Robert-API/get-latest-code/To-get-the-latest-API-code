@@ -1,10 +1,10 @@
 To get the latest API code:
 
 for each terminal window (factomd, fctwallet, and operating) run go-version.sh by COPYING the following line in that terminal window:
-. ~/testing/testing/test-plans-and-scripts/github/get-latest-code/go-version.sh
+. ~/testing/testing/test-plans-and-scripts/Robert-API/get-latest-code/go-version.sh
 
 Then copy this line one time into the 3rd terminal window:
-. ~/testing/testing/test-plans-and-scripts/github/get-latest-code/sweep-environment.sh
+. ~/testing/testing/test-plans-and-scripts/Robert-API/get-latest-code/sweep-environment.sh
 
 In 1st terminal window:
 ~/go/bin/factomd
