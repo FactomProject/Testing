@@ -131,7 +131,7 @@ echo
 echo 1.2.1.3 TRY TO CREATE ENTRY CREDIT WALLET ADDRESS NAME STARTING WITH '"/"'        
 factom-cli generateaddress ec "'/E02'"
 echo 
-echo 1.2.1.2 TRY TO CREATE TOO LONG ENTRY CREDIT WALLET ADDRESS NAME       
+echo 1.2.1.4 TRY TO CREATE TOO LONG ENTRY CREDIT WALLET ADDRESS NAME       
 factom-cli generateaddress ec entry-credit-wallet-address-name01
 echo
 
@@ -206,16 +206,22 @@ echo
 echo 2.4.1 CREATE TRANSACTION        
 factom-cli newtransaction transaction03
 echo
-echo 2.4.2 ADD INPUT OF 100 FACTOIDS TO TRANSACTION        
+echo 2.4.2 ADD INPUT LARGER THAN BALANCE TO TRANSACTION        
+factom-cli addinput transaction03 factoid-wallet-address-name01 2100
+echo
+echo 2.4.3 ADD INPUT OF 100 FACTOIDS TO TRANSACTION        
 factom-cli addinput transaction03 factoid-wallet-address-name01 100
 echo
-echo 2.4.3 SIGN TRANSACTION        
+echo 2.4.4 ADD DUPLICATE INPUT OF 100 FACTOIDS TO TRANSACTION        
+factom-cli addinput transaction03 factoid-wallet-address-name01 100
+echo
+echo 2.4.5 SIGN TRANSACTION        
 factom-cli sign transaction03
 echo
-echo 2.4.4 SUBMIT TRANSACTION        
+echo 2.4.6 SUBMIT TRANSACTION        
 factom-cli submit transaction03
 echo
-echo 2.4.5 VERIFY WALLET BALANCES        
+echo 2.4.7 VERIFY WALLET BALANCES        
 factom-cli getaddresses
 echo
 
