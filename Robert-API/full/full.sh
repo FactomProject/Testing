@@ -206,22 +206,19 @@ echo
 echo 2.4.1 CREATE TRANSACTION        
 factom-cli newtransaction transaction03
 echo
-echo 2.4.2 ADD INPUT LARGER THAN BALANCE TO TRANSACTION        
-factom-cli addinput transaction03 factoid-wallet-address-name01 2100
-echo
-echo 2.4.3 ADD INPUT OF 100 FACTOIDS TO TRANSACTION        
+echo 2.4.2 ADD INPUT OF 100 FACTOIDS TO TRANSACTION        
 factom-cli addinput transaction03 factoid-wallet-address-name01 100
 echo
-echo 2.4.4 ADD DUPLICATE INPUT OF 100 FACTOIDS TO TRANSACTION        
+echo 2.4.3 ADD DUPLICATE INPUT OF 100 FACTOIDS TO TRANSACTION        
 factom-cli addinput transaction03 factoid-wallet-address-name01 100
 echo
-echo 2.4.5 SIGN TRANSACTION        
+echo 2.4.4 SIGN TRANSACTION        
 factom-cli sign transaction03
 echo
-echo 2.4.6 SUBMIT TRANSACTION        
+echo 2.4.5 SUBMIT TRANSACTION        
 factom-cli submit transaction03
 echo
-echo 2.4.7 VERIFY WALLET BALANCES        
+echo 2.4.6 VERIFY WALLET BALANCES        
 factom-cli getaddresses
 echo
 
@@ -342,7 +339,7 @@ echo 2.8.4.3 ADD 2ND PURCHASE TO 1ST ENTRY CREDIT WALLET ADDRESS TO TRANSACTION
 factom-cli addecoutput transaction07 $ECWALLETADDRESSKEY02 9
 echo
 echo 2.8.5 COMPLEX TRANSACTION FEE        
-factom-cli getfee transaction07
+factom-cli transactions
 echo
 echo 2.8.6 SIGN TRANSACTION        
 factom-cli sign transaction07
@@ -375,33 +372,33 @@ factom-cli submit transaction09
 factom-cli balance fct factoid-wallet-address-name03
 echo
 
-echo 2.9.3 ADD FRACTIONAL INPUT OF FACTOIDS WITHOUT LEADING 0 TO TRANSACTION        
+echo 2.9.3 ADD TOO SMALL INPUT OF 0.000000009 FACTOIDS TO TRANSACTION        
 factom-cli newtransaction transaction10
-factom-cli addinput transaction10 factoid-wallet-address-name03 .5
+factom-cli addinput transaction10 factoid-wallet-address-name03 0.000000009
 factom-cli sign transaction10
 factom-cli submit transaction10
 factom-cli balance fct factoid-wallet-address-name03
 echo
 
-echo 2.9.4 ADD TOO SMALL INPUT OF 0.000000009 FACTOIDS TO TRANSACTION        
+echo 2.9.4 ADD FRACTIONAL INPUT OF FACTOIDS TO TRANSACTION        
 factom-cli newtransaction transaction11
-factom-cli addinput transaction11 factoid-wallet-address-name03 0.000000009
+factom-cli addinput transaction11 factoid-wallet-address-name03 0.5
 factom-cli sign transaction11
 factom-cli submit transaction11
 factom-cli balance fct factoid-wallet-address-name03
 echo
 
-echo 2.9.5 ADD JUST LESS THAN MINIMUM INPUT OF 0.01333333 FACTOIDS TO TRANSACTION        
+echo 2.9.5 ADD FRACTIONAL INPUT OF FACTOIDS WITHOUT LEADING 0 TO TRANSACTION        
 factom-cli newtransaction transaction12
-factom-cli addinput transaction12 factoid-wallet-address-name03 0.01333333
+factom-cli addinput transaction12 factoid-wallet-address-name03 .5
 factom-cli sign transaction12
 factom-cli submit transaction12
 factom-cli balance fct factoid-wallet-address-name03
 echo
 
-echo 2.9.6 ADD MINIMUM INPUT OF 0.01333334 FACTOIDS TO TRANSACTION        
+echo 2.9.6 ADD INPUT LARGER THAN FACTOID BALANCE TO TRANSACTION        
 factom-cli newtransaction transaction13
-factom-cli addinput transaction13 factoid-wallet-address-name03 0.01333334
+factom-cli addinput transaction13 factoid-wallet-address-name01 21000
 factom-cli sign transaction13
 factom-cli submit transaction13
 factom-cli balance fct factoid-wallet-address-name03
