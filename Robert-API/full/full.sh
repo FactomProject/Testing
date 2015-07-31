@@ -506,7 +506,7 @@ echo
 echo 3.1.1 TRY TO MAKE CHAIN USING NON-EXISTENT ENTRY CREDIT ADDRESS
 echo
 echo Proposed New Chain ID
-CHAINID=$(factom-cli mkchain -e 123456 -e 123456 xxx <~/testing/testing/test-plans-and-scripts/Robert-API/entries/1st-entry | awk '{print $3}')
+CHAINID=$(factom-cli mkchain -e 1 -e 1 xxx <~/testing/testing/test-plans-and-scripts/Robert-API/entries/small-entry | awk '{print $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
@@ -517,26 +517,11 @@ echo $HEAD
 factom-cli balance ec xxx
 echo
 
-echo 3.1.2 TRY TO MAKE CHAIN WITH ENTRY SIZE \>10KB
+echo 3.1.2 MAKE CHAIN WITH SMALL ENTRY
 echo
 factom-cli balance ec ec-wallet-address-name01
 echo Proposed New Chain ID
-CHAINID=$(factom-cli mkchain -e 123456 -e 1234567 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/1st-entry | awk '{printf $3}')
-echo $CHAINID
-echo
-echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
-sleep 60
-echo Chain Head Merkelroot
-HEAD=$(factom-cli get chain $CHAINID)
-echo $HEAD
-factom-cli balance ec ec-wallet-address-name01
-echo
-
-echo 3.1.3 MAKE CHAIN WITH MAXIMUM ENTRY SIZE \(10240 BYTES\) USING ENTRY CREDIT ADDRESS NAME
-echo
-factom-cli balance ec ec-wallet-address-name01
-echo Proposed New Chain ID
-CHAINIDGOOD=$(factom-cli mkchain -e 123456 -e 123456 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/1st-entry | awk '{printf $3}')
+CHAINIDGOOD=$(factom-cli mkchain -e 2 -e 2 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/small-entry | awk '{printf $3}')
 echo $CHAINIDGOOD
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
@@ -547,25 +532,10 @@ echo $HEADGOOD
 factom-cli balance ec ec-wallet-address-name01
 echo
 
-echo 3.1.4 MAKE CHAIN THAT ALREADY EXISTS
-echo
-factom-cli balance ec ec-wallet-address-name01
-echo Proposed New Chain ID
-CHAINID=$(factom-cli mkchain -e 123456 -e 123456 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/1st-entry | awk '{printf $3}')
-echo $CHAINID
-echo
-echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
-sleep 60
-echo Chain Head Merkelroot
-HEAD=$(factom-cli get chain $CHAINID)
-echo $HEAD
-factom-cli balance ec ec-wallet-address-name01
-echo
-
-echo 3.1.5 MAKE SAME CHAIN USING DIFFERENT INITIAL ENTRY
+echo 3.1.3 MAKE CHAIN WITH ENTRY \(INCLUDING EXTERNAL ID\) SIZE OF 10202 BYTES
 echo
 echo Proposed New Chain ID
-CHAINID=$(factom-cli mkchain -e 123456 -e 123456 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/2nd-entry | awk '{printf $3}')
+CHAINID=$(factom-cli mkchain -e 3 -e 3 $ECWALLETADDRESSKEY01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/big-entry | awk '{printf $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
@@ -576,12 +546,52 @@ echo $HEAD
 factom-cli balance ec $ECWALLETADDRESSKEY01
 echo
 
-echo 3.1.6 MAKE CHAIN USING A ENTRY CREDIT ADDRESS KEY
+echo 3.1.4 MAKE CHAIN WITH MAXIMUM ENTRY \(INCLUDING EXTERNAL ID\) SIZE \(10240 BYTES\)
 echo
-HOUR=$( date +%H )
-MINUTE=$( date +%M )
 echo Proposed New Chain ID
-CHAINID=$(factom-cli mkchain -e $HOUR -e $MINUTE $ECWALLETADDRESSKEY01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/1st-entry | awk '{printf $3}')
+CHAINID=$(factom-cli mkchain -e 12345678901234567890 -e 12345678901234567890 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/big-entry | awk '{printf $3}')
+echo $CHAINID
+echo
+echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
+sleep 60
+echo Chain Head Merkelroot
+HEAD=$(factom-cli get chain $CHAINID)
+echo $HEAD
+factom-cli balance ec ec-wallet-address-name01
+echo
+
+echo 3.1.5 TRY TO MAKE CHAIN WITH ENTRY \(INCLUDING EXTERNAL ID\) SIZE \>10240 BYTES
+echo
+echo Proposed New Chain ID
+CHAINID=$(factom-cli mkchain -e 123456789012345678901 -e 12345678901234567890 $ECWALLETADDRESSKEY01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/big-entry | awk '{printf $3}')
+echo $CHAINID
+echo
+echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
+sleep 60
+echo Chain Head Merkelroot
+HEAD=$(factom-cli get chain $CHAINID)
+echo $HEAD
+factom-cli balance ec $ECWALLETADDRESSKEY01
+echo
+
+echo 3.1.6 MAKE CHAIN THAT ALREADY EXISTS
+echo
+echo Proposed New Chain ID
+CHAINID=$(factom-cli mkchain -e 2 -e 2 ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/small-entry | awk '{printf $3}')
+echo $CHAINID
+echo
+echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
+sleep 60
+echo Chain Head Merkelroot
+HEAD=$(factom-cli get chain $CHAINID)
+echo $HEAD
+factom-cli balance ec ec-wallet-address-name01
+echo
+
+echo 3.1.7 MAKE SAME CHAIN USING DIFFERENT INITIAL ENTRY
+echo
+echo Proposed New Chain ID
+CHAINID=$(factom-cli mkchain -e 2 -e 2 $ECWALLETADDRESSKEY01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/big-entry | awk '{printf $3}')
 echo $CHAINID
 echo
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
@@ -631,12 +641,13 @@ done
 echo
 
 echo 3.2.2 ADD ENTRY TO CHAIN
-factom-cli put -e 333333 -e 444444 -c $CHAINIDGOOD ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/2nd-entry
+factom-cli put -e 4 -e 4 -c $CHAINIDGOOD ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/small-entry
 echo Chain Head Merkelroot
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
 HEADGOOD=$(factom-cli get chain $CHAINIDGOOD)
 echo $HEADGOOD
+echo
 
 echo 3.2.3 TRACE ENTRY BLOCK CHAIN
 ENTRYKEYMERKELROOT=$HEADGOOD
