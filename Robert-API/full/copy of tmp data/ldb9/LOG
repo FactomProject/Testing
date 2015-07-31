@@ -1,0 +1,5 @@
+=============== Jul 31, 2015 (CDT) ===============
+11:12:36.401719 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:12:36.402250 db@open opening
+11:12:36.481774 db@janitor F·2 G·0
+11:12:36.481836 db@open done T·79.558807ms
