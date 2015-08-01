@@ -1,5 +1,6 @@
 #!/bin/bash
 factom-cli setup loadtest          # Which may or may not create the fountain addresses
+factom-cli newaddress fct 07-Fountain
 factom-cli newaddress ec app
 factom-cli newtransaction lt
 factom-cli addinput       lt 07-Fountain 1000
