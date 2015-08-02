@@ -77,15 +77,18 @@ func(fs *Test_state) Init(test *testing.T) {
         fs.inputAddresses = append(fs.inputAddresses,addr)
         fs.outputAddresses = append(fs.outputAddresses,addr)
     }
+    
+    fs.twallet.NewSeed([]byte("Test State and Balances"))
+    
     for i:=0; i<500; i++ {
         addr, err := fs.twallet.GenerateFctAddress([]byte("testout_"+cv.Itoa(i)),1,1)
         if err != nil { fct.Prtln(err); test.Fail() }
         fs.outputAddresses = append(fs.outputAddresses,addr)
     }
-    for i:=0; i<50; i++ {
+    for i:=0; i<1000; i++ {
         addr, err := fs.twallet.GenerateECAddress([]byte("testecout_"+cv.Itoa(i)))
         if err != nil { fct.Prtln(err); test.Fail() }
-        fs.ecoutputAddresses = append(fs.outputAddresses,addr)
+        fs.ecoutputAddresses = append(fs.ecoutputAddresses,addr)
     }
     fs.stats.begin()
 }

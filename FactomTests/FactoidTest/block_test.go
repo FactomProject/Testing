@@ -41,14 +41,25 @@ func Test_setup_FactoidState (test *testing.T) {
     fs.Init(test)
 }
 
+func PrtTrans(t fct.ITransaction){
+    fmt.Println("Transaction") 
+    for _,input    := range t.GetInputs()    { 
+        fmt.Println("in ", input.GetAddress(), input.GetAmount(), fs.GetBalance(input.GetAddress())) 
+    }
+    for _,output   := range t.GetOutputs()   { 
+        fmt.Println("out", output.GetAddress(), output.GetAmount(), fs.GetBalance(output.GetAddress())) 
+    }
+    for _,ecoutput := range t.GetECOutputs() { 
+        fmt.Println("ec ", ecoutput.GetAddress(), ecoutput.GetAmount(), fs.GetECBalance(ecoutput.GetAddress())) 
+    }
+}
 
 func Test_create_genesis_FactoidState (test *testing.T) {
-    fmt.Print("\033[2J")
     
-    numBlocks       := 5000
-    numTransactions := 500
+    numBlocks       := 1
+    numTransactions := 10
     maxIn           := 5
-    maxOut          := 20
+    maxOut          := 5
     if testing.Short() {
         fmt.Print("\nDoing Short Tests\n")
         numBlocks       = 5
@@ -75,22 +86,40 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         fs.SetDB(new(database.MapDB))
         fs.GetDB().Init()
     }
+    // Make the coinbase very generous
+    block.UpdateAmount(100000000000)
+    
     // Set the price for Factoids
     fs.SetFactoshisPerEC(100000)
     err := fs.LoadState()
+    
+    pre := fs.GetTransactionBlock(fs.GetCurrentBlock().GetPrevKeyMR())
+    if pre.GetHash().IsEqual(fs.GetCurrentBlock().GetPrevKeyMR()) != nil {
+        fmt.Printf("Something is ill!")
+        test.Fail()
+        return
+    }
+    
+     // Print the Genesis Block.  Note that the balances are off, because it 
+     // is a block back!
+     for _,trans := range pre.GetTransactions() {
+         PrtTrans(trans)
+     }
+        
     if err != nil {
         fct.Prtln("Failed to load:", err)
         test.Fail()
         return
     }
     
-    // Make the coinbase very generous
-    block.UpdateAmount(100000000000)
-    
     var max,min,maxblk int
     min = 100000
     // Create a number of blocks (i)
     for i:=0; i<numBlocks; i++ {
+        
+        fmt.Println("Block",fs.GetCurrentBlock().GetDBHeight())
+
+        PrtTrans(fs.GetCurrentBlock().GetTransactions()[0])
         
         periodMark := 1
         // Create a new block
@@ -102,7 +131,6 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
             
             tx := fs.newTransaction(maxIn,maxOut)
-            
             
             addtest := true
             flip := rand.Int()%100
@@ -164,6 +192,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
             
             t := new(fct.Transaction)
+            
             err = t.UnmarshalBinary(m)
             
             if good && tx.IsEqual(t) != nil { 
@@ -186,7 +215,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
                             
             if good {
-                err = fs.AddTransaction(j,t)
+                err = fs.AddTransaction(j+1,t)
             }
             if !addtest  && err == nil {
                 ts := int64(t.GetMilliTimestamp())
@@ -211,6 +240,8 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             } 
             
             if good && addtest {
+                
+                PrtTrans(t)
                 fs.stats.transactions += 1
                 
                 title := fmt.Sprintf("Bad Transactions: %d  Total transaactions %d",
@@ -284,11 +315,32 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         
     }
     fmt.Println("\nDone")
-}
 
-func Test_build_blocks_FactoidState (test *testing.T) {
-    
-    
+//     // Get the head of the Factoid Chain
+//     blk := fs.GetTransactionBlock(fct.FACTOID_CHAINID_HASH)
+//     hashes := make([]fct.IHash,0,10)
+//     // First run back from the head back to the genesis block, collecting hashes.
+//     for {
+//         h := blk.GetHash()
+//         hashes = append(hashes,h)
+//         if bytes.Compare(blk.GetPrevKeyMR().Bytes(),fct.ZERO_HASH) == 0 { 
+//             break 
+//         }
+//         tblk := fs.GetTransactionBlock(blk.GetPrevKeyMR())        
+//         blk = tblk
+//         time.Sleep(time.Second/100)
+//     }
+//     
+//     // Now run forward, and build our accounting
+//     for i := len(hashes)-1; i>=0; i-- {
+//         blk = fs.GetTransactionBlock(hashes[i])
+//         fmt.Println("Block",blk.GetDBHeight())
+//         for _,trans := range blk.GetTransactions() {
+//             PrtTrans(trans)
+//         }
+//     }
 }
+    
+
 
 
