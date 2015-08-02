@@ -43,10 +43,8 @@ func Test_setup_FactoidState (test *testing.T) {
 
 
 func Test_create_genesis_FactoidState (test *testing.T) {
-    fmt.Print("\033[2J")
-    
-    numBlocks       := 5000
-    numTransactions := 500
+    numBlocks       := 5
+    numTransactions := 50
     maxIn           := 5
     maxOut          := 20
     if testing.Short() {
@@ -186,7 +184,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
                             
             if good {
-                err = fs.AddTransaction(j,t)
+                err = fs.AddTransaction(j+1,t)
             }
             if !addtest  && err == nil {
                 ts := int64(t.GetMilliTimestamp())
