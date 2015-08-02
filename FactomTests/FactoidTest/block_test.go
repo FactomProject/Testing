@@ -55,9 +55,8 @@ func PrtTrans(t fct.ITransaction){
 }
 
 func Test_create_genesis_FactoidState (test *testing.T) {
-    
-    numBlocks       := 1
-    numTransactions := 10
+    numBlocks       := 5
+    numTransactions := 50
     maxIn           := 5
     maxOut          := 5
     if testing.Short() {
@@ -192,7 +191,6 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
             
             t := new(fct.Transaction)
-            
             err = t.UnmarshalBinary(m)
             
             if good && tx.IsEqual(t) != nil { 
@@ -315,7 +313,6 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         
     }
     fmt.Println("\nDone")
-
 //     // Get the head of the Factoid Chain
 //     blk := fs.GetTransactionBlock(fct.FACTOID_CHAINID_HASH)
 //     hashes := make([]fct.IHash,0,10)
