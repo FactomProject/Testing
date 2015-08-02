@@ -55,10 +55,10 @@ func PrtTrans(t fct.ITransaction){
 }
 
 func Test_create_genesis_FactoidState (test *testing.T) {
-    numBlocks       := 5
-    numTransactions := 50
-    maxIn           := 5
-    maxOut          := 5
+    numBlocks       := 100
+    numTransactions := 500
+    maxIn           := 2
+    maxOut          := 4
     if testing.Short() {
         fmt.Print("\nDoing Short Tests\n")
         numBlocks       = 5
@@ -295,6 +295,8 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             }
         }
         var out bytes.Buffer
+        out.WriteString(fmt.Sprintf("%6d Total Transactions\n%6d Total Errors\n",
+                                    fs.stats.transactions,fs.stats.badAddresses))
         for _,key := range keys {
             ecnt := fs.stats.errors[key]
             by  := []byte(fs.stats.full[key])

@@ -9,7 +9,7 @@
 
 { cnt++ }
 
-/out / {
+/^out / {
     addr[$3]+=$4
     if (addr[$3] != $5) {
         err[$3] = cnt " output " $3 " has a balance of " addr[$3] " but Factom thinks " $5 
@@ -18,7 +18,7 @@
     }
 }
 
-/in / {
+/^in / {
     addr[$3]-=$4
     if (addr[$3] != $5) {
         err[$3] = cnt " input " $3 " has a balance of " addr[$3] " but Factom thinks " $5 
@@ -27,7 +27,7 @@
     }
 }
 
-/ec / {
+/^ec / {
     ecaddr[$3]+=$4
     if (ecaddr[$3] != $5) {
         err[$3] = cnt " ecoutput " $3 " has a balance of " ecaddr[$3] " but Factom thinks " $5 

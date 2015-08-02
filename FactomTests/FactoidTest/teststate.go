@@ -13,6 +13,7 @@ import (
     "math/rand"
     cv  "strconv"
     fct "github.com/FactomProject/factoid"    
+    cp  "github.com/FactomProject/FactomCode/controlpanel"    
     "github.com/FactomProject/factoid/state"    
     "github.com/FactomProject/factoid/wallet"    
 )
@@ -106,22 +107,29 @@ func(fs *Test_state) GetTime32() int64 {
 }
 
 func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
-    var max, max2 uint64
+    var max,sum uint64
     fs.inputAddresses = make([]fct.IAddress,0,20)
     for _,output := range fs.outputAddresses {
         bal := fs.GetBalance(output)
-        if bal > 1000000000 {
+        if bal > 10000000 {
             fs.inputAddresses = append(fs.inputAddresses, output)
+            sum += bal
         }
         if max < bal {
-            max2 = max
             max = bal
-        }else{
-            if max2 < bal {
-                max2 = bal 
-            }
-        }        
+        }
     }
+    
+    cp.CP.AddUpdate(
+        "Test max min inputs",                                               // tag
+        "info",                                                              // Category 
+        "Tests generation",                                                  // Title
+          fmt.Sprintf("Input Addresses %d\nMax balance %s, Average Balance %s",
+             len(fs.inputAddresses),
+             strings.TrimSpace(fct.ConvertDecimal(max)),
+             strings.TrimSpace(fct.ConvertDecimal(sum/uint64(len(fs.inputAddresses))))),    // Msg
+        60)                                                                  // Expire 
+    
     
     // The following code is a function that creates an array
     // of addresses pulled from some source array of addresses
@@ -138,16 +146,36 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
 
     mIn := maxIn
     mOut := maxOut
+    mEc  := maxOut
     
+    // Distribute our randomness over various spaces.  This doesn't
+    // make for realistic transactions, but we don't care so much.
     joker := rand.Int()%100
-    if joker < 1 { mIn = maxIn*100 }
+    if joker < 1 { mIn = maxIn*2 }
+    if joker < 2 { mIn = maxIn*4 }
+    if joker < 3 { mIn = maxIn*8 }
+    if joker < 4 { mIn = maxIn*16 }
+    if joker < 5 { mIn = maxIn*32 }
+    if joker < 6 { mIn = maxIn*64 }
     joker = rand.Int()%100
-    if joker < 1 { mOut = maxOut*200 }
+    if joker < 1 { mOut = maxOut*2 }
+    if joker < 2 { mOut = maxOut*4 }
+    if joker < 3 { mOut = maxOut*8 }
+    if joker < 4 { mOut = maxOut*16 }
+    if joker < 5 { mOut = maxOut*32 }
+    if joker < 6 { mOut = maxOut*64 }
+    joker = rand.Int()%100
+    if joker < 1 { mEc = maxOut*2 }
+    if joker < 2 { mEc = maxOut*4 }
+    if joker < 3 { mEc = maxOut*8 }
+    if joker < 4 { mEc = maxOut*16 }
+    if joker < 5 { mEc = maxOut*32 }
+    if joker < 6 { mEc = maxOut*64 }
     
     // Get one to five inputs, and one to five outputs
     numInputs := rand.Int()%mIn+1
     numOutputs := rand.Int()%mOut
-    mumECOutputs := rand.Int()%mOut
+    mumECOutputs := rand.Int()%mEc
  
  
  
@@ -164,7 +192,7 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
     t := fs.twallet.CreateTransaction(fs.GetTimeMilli())
     for _, adr := range inputs {
         balance := fs.GetBalance(adr)
-        toPay := uint64(rand.Int63())%(balance)
+        toPay := uint64(rand.Int63())%(balance/2)
         paid = toPay+paid
         fs.twallet.AddInput(t,adr, toPay)
     }

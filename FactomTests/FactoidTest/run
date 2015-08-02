@@ -1,5 +1,5 @@
 rm fct_test.db
 echo "run..."
-go test > transTest.tst 2>/dev/null 
+go test -timeout 24h > transTest 2>/dev/null 
 echo "Gawk..."
-gawk -f validate.awk transTest.tst
+gawk -f validate.awk transTest
