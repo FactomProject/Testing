@@ -55,8 +55,8 @@ func PrtTrans(t fct.ITransaction){
 }
 
 func Test_create_genesis_FactoidState (test *testing.T) {
-    numBlocks       := 5
-    numTransactions := 500      // Maximum Transactions
+    numBlocks       := 100
+    numTransactions := 10000      // Maximum Transactions
     maxIn           := 5
     maxOut          := 5
     if testing.Short() {
@@ -67,7 +67,24 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         maxOut          = 5
     }
     
+    cp.CP.AddUpdate(
+        "Test Parms",
+        "status",                                                              // Category 
+        fmt.Sprintf("Number of Blocks %d Max number Transactions %d",
+            numBlocks,numTransactions),
+        "",
+        0)
+    
     numTransactions = rand.Int()%numTransactions+1
+    
+    cp.CP.AddUpdate(
+        "This Block",
+        "status",                                                              // Category 
+        fmt.Sprintf("Number of Transactions in this block: %d",
+                    numTransactions),
+                    "",
+                    0)
+    
     
     // Use Bolt DB
     if !testing.Short() {
