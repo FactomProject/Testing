@@ -706,7 +706,7 @@ echo
 echo 3.2.3 ADD ENTRY TO CHAIN USING ENTRY CREDIT WALLET ADDRESS
 echo 3.2.3.1 ADD ENTRY TO CHAIN
 factom-cli balance ec ec-wallet-address-name01
-factom-cli put -e 6 -e 6 -c $CHAINIDGOOD ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/small-entry
+factom-cli put -e 6 -e 6 -c $CHAINIDGOOD ec-wallet-address-name01 <~/testing/testing/test-plans-and-scripts/Robert-API/entries/another-small-entry
 echo Chain Head Merkelroot
 echo WAITING 60 SECONDS FOR DIRECTORY BLOCK TO CLOSE
 sleep 60
