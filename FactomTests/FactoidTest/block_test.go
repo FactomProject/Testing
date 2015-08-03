@@ -54,9 +54,14 @@ func PrtTrans(t fct.ITransaction){
     }
 }
 
+// Run a simulation of Transactions and blocks designed to test a pseudo random transaction set.
+// If randomize = 0, then we will use the clock to seed the random number generator, and print the
+// 64 bit seed used.  If randomize is set to some value, we use that vaule (allowing us to repeat
+// tests if we like.
 func Test_create_genesis_FactoidState (test *testing.T) {
-    numBlocks       := 100
-    numTransactions := 10000      // Maximum Transactions
+    randomize       := int64(0)
+    numBlocks       := 50
+    numTransactions := 10      // Maximum Transactions
     maxIn           := 5
     maxOut          := 5
     if testing.Short() {
@@ -67,24 +72,24 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         maxOut          = 5
     }
     
+    if randomize == 0 {
+        randomize = time.Now().UnixNano()
+        rand.Seed(randomize)
+        randomize = rand.Int63()
+        rand.Seed(randomize)    
+    }else{
+        rand.Seed(randomize)
+    }
+    
+    fmt.Println("Randomize Seed Used: ",randomize)
+    
     cp.CP.AddUpdate(
         "Test Parms",
         "status",                                                              // Category 
         fmt.Sprintf("Number of Blocks %d Max number Transactions %d",
             numBlocks,numTransactions),
-        "",
+        fmt.Sprintf("Randomize Seed: %v",randomize),
         0)
-    
-    numTransactions = rand.Int()%numTransactions+1
-    
-    cp.CP.AddUpdate(
-        "This Block",
-        "status",                                                              // Category 
-        fmt.Sprintf("Number of Transactions in this block: %d",
-                    numTransactions),
-                    "",
-                    0)
-    
     
     // Use Bolt DB
     if !testing.Short() {
@@ -139,11 +144,27 @@ func Test_create_genesis_FactoidState (test *testing.T) {
 
         PrtTrans(fs.GetCurrentBlock().GetTransactions()[0])
         
+        thisRunLimit := (rand.Int()%numTransactions)+1
+        
+        cp.CP.AddUpdate(
+            "This Block",
+            "status",                                                              // Category 
+            fmt.Sprintf("Number of Transactions in this block: %d",
+                        thisRunLimit),
+                        "",
+                        0)
+        
+        
+        
+        var transCnt int
         periodMark := 1
         // Create a new block
-        for j:=fs.stats.transactions; fs.stats.transactions < j+numTransactions; {      // Execute for some number RECORDED transactions
+        for j:=fs.stats.transactions; fs.stats.transactions < j+thisRunLimit; {      // Execute for some number RECORDED transactions
+            transCnt++
+            periodvalue := thisRunLimit/10 
+            if periodvalue == 0 { periodvalue = 1 }
             
-            if periodMark <=10 && fs.stats.transactions%(numTransactions/10)==0 {
+            if periodMark <=10 && transCnt%(periodvalue)==0 {
                 fs.EndOfPeriod(periodMark)
                 periodMark++
             }

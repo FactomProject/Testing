@@ -9,12 +9,16 @@
 
 { cnt++ }
 
+/^Transaction/ { transCnt++ }
+/^Block/ { blockCnt++ }
+/^Randomize/ { seed=$4 }
 /^out / {
     addr[$3]+=$4
     if (addr[$3] != $5) {
         err[$3] = cnt " output " $3 " has a balance of " addr[$3] " but Factom thinks " $5 
     }else{
         delete err[$3]
+        goodOutput++
     }
 }
 
@@ -24,6 +28,7 @@
         err[$3] = cnt " input " $3 " has a balance of " addr[$3] " but Factom thinks " $5 
     }else{
         delete err[$3]
+        goodInput++
     }
 }
 
@@ -33,11 +38,18 @@
         err[$3] = cnt " ecoutput " $3 " has a balance of " ecaddr[$3] " but Factom thinks " $5 
     }else{
         delete err[$3]
+        goodECOutput++
     }
 }
 
 END {
-    print "Processed " cnt " lines of output"
+    print "Seed = " seed
+    print "Processed " transCnt " Transactions and " blockCnt " blocks"
+    print "Found " length(err) " Errors"
+    print "Found " goodInput " Good Inputs"
+    print "Found " goodOutput " Good Outputs"
+    print "Found " goodECOutput " Good ECOutputs"
+    
     for (x in err) {
         print err[x]
     }
