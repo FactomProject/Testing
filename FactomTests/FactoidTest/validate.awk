@@ -12,6 +12,14 @@
 /^Transaction/ { transCnt++ }
 /^Block/ { blockCnt++ }
 /^Randomize/ { seed=$4 }
+
+
+/.*address already in use.*/ { 
+    noprint = 1
+    print "Cannot run the control panel.  Please stop any running factomd client and run again"
+    exit(1)
+}
+
 /^out / {
     addr[$3]+=$4
     if (addr[$3] != $5) {
@@ -43,14 +51,18 @@
 }
 
 END {
-    print "Seed = " seed
-    print "Processed " transCnt " Transactions and " blockCnt " blocks"
-    print "Found " length(err) " Errors"
-    print "Found " goodInput " Good Inputs"
-    print "Found " goodOutput " Good Outputs"
-    print "Found " goodECOutput " Good ECOutputs"
-    
-    for (x in err) {
-        print err[x]
+    if (!noprint) {
+        print "Seed = " seed
+        print "Processed " transCnt " Transactions and " blockCnt " blocks"
+        print "Found " length(err) " Errors"
+        print "Found " goodInput " Good Inputs"
+        print "Found " goodOutput " Good Outputs"
+        print "Found " goodECOutput " Good ECOutputs"
+        
+        if (length(err) > 0) {
+            for (x in err) {
+                print err[x]
+            }
+        }
     }
 }

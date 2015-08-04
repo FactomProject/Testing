@@ -7,6 +7,7 @@ package test
 import (
     "encoding/hex"
     "encoding/binary"
+    "os"
     "fmt"
     "bytes"
     "time"
@@ -115,7 +116,10 @@ func Test_create_genesis_FactoidState (test *testing.T) {
     // Set the price for Factoids
     fs.SetFactoshisPerEC(100000)
     err := fs.LoadState()
-    
+    if err != nil {
+        fmt.Println("Faid to initialize: ",err)
+        os.Exit(1)
+    }
     pre := fs.GetTransactionBlock(fs.GetCurrentBlock().GetPrevKeyMR())
     if pre.GetHash().IsEqual(fs.GetCurrentBlock().GetPrevKeyMR()) != nil {
         fmt.Printf("Something is ill!")
@@ -360,7 +364,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
 //     for {
 //         h := blk.GetHash()
 //         hashes = append(hashes,h)
-//         if bytes.Compare(blk.GetPrevKeyMR().Bytes(),fct.ZERO_HASH) == 0 { 
+//         if bytes.Compare(blk.GetPrevKeyMR().Bytes(),fct.ZERO) == 0 { 
 //             break 
 //         }
 //         tblk := fs.GetTransactionBlock(blk.GetPrevKeyMR())        
