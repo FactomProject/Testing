@@ -1,4 +1,4 @@
-
+#!\ /bin/gawk
 # This is to fix the fact that without modifing Factom, the Genesis block is already
 # complete before we can print.  So it already has the reward added.  But to make our
 # code work, we need to remove the reward.
