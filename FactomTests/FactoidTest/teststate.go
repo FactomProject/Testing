@@ -111,7 +111,7 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
     fs.inputAddresses = make([]fct.IAddress,0,20)
     for _,output := range fs.outputAddresses {
         bal := fs.GetBalance(output)
-        if bal > 10000000 {
+        if bal > 100000 {
             fs.inputAddresses = append(fs.inputAddresses, output)
             sum += bal
         }
@@ -178,8 +178,9 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
     mumECOutputs := rand.Int()%mEc
  
  
- 
-    numInputs = (numInputs%(len(fs.inputAddresses)-2))+1
+    lim := len(fs.inputAddresses)-2
+    if lim <= 0 {lim = 1}
+    numInputs = (numInputs%(lim))+1
 
    // fmt.Println("inputs outputs",numInputs,numOutputs, "limits",len(fs.inputAddresses),len(fs.outputAddresses))
     

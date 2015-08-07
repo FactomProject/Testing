@@ -61,10 +61,10 @@ func PrtTrans(t fct.ITransaction){
 // tests if we like.
 func Test_create_genesis_FactoidState (test *testing.T) {
     randomize       := int64(0)
-    numBlocks       := 50
-    numTransactions := 10      // Maximum Transactions
-    maxIn           := 5
-    maxOut          := 5
+    numBlocks       := 5
+    numTransactions := 2      // Maximum Transactions
+    maxIn           := 1
+    maxOut          := 1
     if testing.Short() {
         fmt.Print("\nDoing Short Tests\n")
         numBlocks       = 5
@@ -111,7 +111,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         fs.GetDB().Init()
     }
     // Make the coinbase very generous
-    block.UpdateAmount(100000000000)
+    block.UpdateAmount(10000000)
     
     // Set the price for Factoids
     fs.SetFactoshisPerEC(100000)
@@ -121,18 +121,20 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         os.Exit(1)
     }
     pre := fs.GetTransactionBlock(fs.GetCurrentBlock().GetPrevKeyMR())
-    if pre.GetHash().IsEqual(fs.GetCurrentBlock().GetPrevKeyMR()) != nil {
+    if !bytes.Equal(pre.GetHash().Bytes(), fs.GetCurrentBlock().GetPrevKeyMR().Bytes()) {
         fmt.Printf("Something is ill!")
         test.Fail()
         return
     }
     
-     // Print the Genesis Block.  Note that the balances are off, because it 
-     // is a block back!
-     for _,trans := range pre.GetTransactions() {
-         PrtTrans(trans)
+     // Print the Genesis Block.  If we don't know the past, then print it.
+     past := fs.GetTransactionBlock(pre.GetPrevKeyMR())
+     if past == nil {
+        for _,trans := range pre.GetTransactions() {
+            PrtTrans(trans)
+        }
      }
-        
+     
     if err != nil {
         fct.Prtln("Failed to load:", err)
         test.Fail()
@@ -321,8 +323,38 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             fmt.Sprintf("Transactions per second %4.2f, (+ bad) %4.2f",sec1,sec2), // Title
                         "",                                   // Msg
                         0)                                    // Expires  
-        
+        fmt.Println("Block Check")
+        blk1   := fs.GetCurrentBlock()
+        blk1MR := fs.GetCurrentBlock().GetHash()
+        fmt.Println("ProcessEndOfBlock")
         fs.ProcessEndOfBlock()             // Process the block.
+        fmt.Println("Check ProcessEndOfBlock")
+        blk2PMR := fs.GetCurrentBlock().GetPrevKeyMR()
+        if !bytes.Equal(blk1MR.Bytes(),blk2PMR.Bytes()) {
+            fmt.Println("MR's don't match")
+            test.Fail()
+            return
+        }
+        data, err := blk1.MarshalBinary()
+        if err != nil {
+            fmt.Println("Failed to Marshal")
+            test.Fail()
+            return
+        }
+        blk1b := new(block.FBlock)
+        err = blk1b.UnmarshalBinary(data)
+        if err != nil {
+            fmt.Println("Failed to Unmarshal")
+            test.Fail()
+            return
+        }
+        if !bytes.Equal(blk2PMR.Bytes(),blk1b.GetKeyMR().Bytes()) {
+            fmt.Println("Unmarshaled MR doesn't match")
+            test.Fail()
+            return
+        }
+        
+        
         
         c := 1
         keys := make([]string, 0, len(fs.stats.errors))
