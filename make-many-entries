@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Michael's load testing for writing 1 entry per second:
+
+rand=$(openssl rand -base64 8)
+
+chainid=$(echo testing | factom-cli mkchain -e $rand -e test -e 1 app | awk -F': ' '{print $2}')
+
+echo ChainID $chainid >>testchainid
+
+for ((i=0; i < 100; i++)); do
+    echo $i | factom-cli put -c $chainid -e $i app &
+    sleep 1
+done
+
+echo entries have been written to chain $chainid
+
+# Michael's load testing for writing 100,000 entries in groups of 1000 with 1 second between groups:
+
+for ((i=0; i < 100; i++)); do
+    for ((j=0; j < 1000; j++)); do
+        echo $i $j | factom-cli put -c $chainid -e $i -e $j app &
+    done
+    sleep 1
+done
+
+# mine
+
+for ((i=0; i < 1000; i++)); do
+    echo $i | factom-cli put -e $HOUR -e $MINUTE -c $CHAIN ec-wallet-address-name01 
+done
+
