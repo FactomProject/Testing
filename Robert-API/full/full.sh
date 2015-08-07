@@ -10,42 +10,19 @@ echo
 echo 1.1.1 CREATE FACTOID WALLET ADDRESSES        
 echo
 echo 1.1.1.1 CREATE LEGITIMATE FACTOID WALLET ADDRESSES CONTAINING 2000 FACTOIDS        
-factom-cli generateaddress fct dummy0
-factom-cli generateaddress fct dummy1
-factom-cli generateaddress fct dummy2
-factom-cli generateaddress fct dummy3
-factom-cli generateaddress fct dummy4
-factom-cli generateaddress fct dummy5
-factom-cli generateaddress fct dummy6
-factom-cli generateaddress fct dummy7
-factom-cli generateaddress fct dummy8
-factom-cli generateaddress fct dummy9
-FACTOIDWALLETADDRESSKEY01=$(factom-cli generateaddress fct factoid-wallet-address-name01 | awk '{print $3}')
-echo factoid-wallet-address-name01 = $FACTOIDWALLETADDRESSKEY01
-factom-cli newtransaction dummytransaction1
-factom-cli addinput dummytransaction1 dummy1 2001
-factom-cli addoutput dummytransaction1 factoid-wallet-address-name01 2000
-factom-cli sign dummytransaction1
-factom-cli submit dummytransaction1
-factom-cli balance fct factoid-wallet-address-name01
-echo 
-FACTOIDWALLETADDRESSKEY02=$(factom-cli generateaddress fct factoid-wallet-address-name02 | awk '{print $3}')
-echo factoid-wallet-address-name02 = $FACTOIDWALLETADDRESSKEY02
-factom-cli newtransaction dummytransaction2
-factom-cli addinput dummytransaction2 dummy2 2001
-factom-cli addoutput dummytransaction2 factoid-wallet-address-name02 2000
-factom-cli sign dummytransaction2
-factom-cli submit dummytransaction2
-factom-cli balance fct factoid-wallet-address-name02
-echo 
-FACTOIDWALLETADDRESSKEY03=$(factom-cli generateaddress fct factoid-wallet-address-name03 | awk '{print $3}')
-echo factoid-wallet-address-name03 = $FACTOIDWALLETADDRESSKEY03
-factom-cli newtransaction dummytransaction3
-factom-cli addinput dummytransaction3 dummy3 2001
-factom-cli addoutput dummytransaction3 factoid-wallet-address-name03 2000
-factom-cli sign dummytransaction3
-factom-cli submit dummytransaction3
-factom-cli balance fct factoid-wallet-address-name03
+for ((i=1; i < 11; i++)); do factom-cli generateaddress fct dummy$i; done
+for ((i=1; i < 4; i++)); do
+    tmpkey="FACTOIDWALLETADDRESSKEY0$i"
+    tmpname="factoid-wallet-address-name0$i"
+    declare $tmpkey=$(factom-cli generateaddress fct $tmpname | awk '{print $3}')
+    echo "factoid-wallet-address-name0$i = "${!tmpkey}
+    factom-cli newtransaction dummytransaction$i
+    factom-cli addinput dummytransaction$i dummy$i 2001
+    factom-cli addoutput dummytransaction$i factoid-wallet-address-name0$i 2000
+    factom-cli sign dummytransaction$i
+    factom-cli submit dummytransaction$i
+    factom-cli balance fct factoid-wallet-address-name0$i
+done
 echo 
 echo 1.1.1.2 TRY TO CREATE TOO LONG FACTOID WALLET ADDRESS NAME       
 factom-cli generateaddress fct factoid-wallet-address-name890123
@@ -135,8 +112,9 @@ echo 1.1.2.1 LIST ALL WALLET ADDRESS BALANCES
 factom-cli getaddresses
 echo 
 echo 1.1.2.2 LIST FACTOID WALLET ADDRESS BALANCES INDIVIDUALLY        
-factom-cli balance fct factoid-wallet-address-name01
-factom-cli balance fct $FACTOIDWALLETADDRESSKEY01
+factom-cli balance fct factoid-wallet-address-name0$i
+    TMP="FACTOIDWALLETADDRESSKEY0$i" 
+ factom-cli balance fct $FACTOIDWALLETADDRESSKEY01
 factom-cli balance fct factoid-wallet-address-name02
 factom-cli balance fct $FACTOIDWALLETADDRESSKEY02
 factom-cli balance fct factoid-wallet-address-name03
@@ -473,7 +451,7 @@ for ((i=0; i < 76; i++)); do
     factom-cli newtransaction transfertransaction$i
     factom-cli addinput transfertransaction$i dummy0 2
     factom-cli generateaddress fct input-address-name$i
-    factom-cli addoutput transfertransaction$i input-address-name$i 1.99
+    factom-cli addoutput transfertransaction$i input-address-name$i 1.9
     factom-cli sign transfertransaction$i
     factom-cli submit transfertransaction$i
     j=`echo "scale=8;$i/100" | bc`
@@ -488,7 +466,7 @@ factom-cli newtransaction transaction17
 factom-cli newtransaction transfertransaction76
 factom-cli addinput transfertransaction76 dummy0 2
 factom-cli generateaddress fct input-address-name76
-factom-cli addoutput transfertransaction76 input-address-name76 1.99
+factom-cli addoutput transfertransaction76 input-address-name76 1.9
 factom-cli sign transfertransaction76
 factom-cli submit transfertransaction76
 for ((i=0; i < 77; i++)); do
@@ -751,10 +729,68 @@ until [ "$ENTRYKEYMERKELROOT" =  '0000000000000000000000000000000000000000000000
 done
 echo
 
-: <<'EOF'
-
 echo 3.2.4 MAKE MANY ENTRIES
 echo
+echo 3.2.4.1 ACQUIRE MANY ENTRY CREDITS
+factom-cli balance ec ec-wallet-address-name01
+factom-cli newtransaction transaction18
+factom-cli addinput transfertransaction18 dummy4 200
+factom-cli addecoutput transfertransaction18 ec-wallet-address-name01 199
+factom-cli sign transfertransaction18
+factom-cli submit transfertransaction18
+factom-cli balance ec ec-wallet-address-name01
+echo
+echo 3.2.4.2 CREATE 10 ENTRIES
+for ((i=0; i < 10; i++)); do
+    echo $i | factom-cli put -c $CHAINIDGOOD -e $i ec-wallet-address-name01 &
+    sleep 1
+done
+echo
+echo 3.2.4.3 CHECK THAT ENTRY CREDIT TIMESTAMPS ARE DIFFERENT FROM ENTRY BLOCK TIMESTAMP AND FROM EACH OTHER
+sleep 60
+HEADGOOD=$(factom-cli get chain $CHAINIDGOOD)
+echo $HEADGOOD
+echo
+echo 3.2.3.2 TRACE ENTRY BLOCK CHAIN
+ENTRYKEYMERKELROOT=$HEADGOOD
+until [ "$ENTRYKEYMERKELROOT" =  '0000000000000000000000000000000000000000000000000000000000000000' -o "$ENTRYKEYMERKELROOT" = "" ]; do
+    RESULT=$(factom-cli get eblock $ENTRYKEYMERKELROOT)
+#   echo $RESULT
+    SEQNO=$(echo $RESULT | awk '{printf $2}')
+    TIMESTAMP=$(echo $RESULT | awk '{printf $8}')    
+    EBCHAINID=$(echo $RESULT | awk '{printf $4}')
+    ENTRYKEYMERKELROOT=$(echo $RESULT | awk '{printf $6}')
+    echo ENTRY BLOCK
+    echo -----------
+    echo Sequence Number - Time Stamp
+    echo $SEQNO $TIMESTAMP
+    echo Chain ID
+    echo $EBCHAINID
+    echo Previous Entry Block Key Merkel Root 
+    echo $ENTRYKEYMERKELROOT
+    echo
+    ENTRYINDEX=12
+    ENTRYTIMESTAMP=$(echo $RESULT | awk '{printf $12}')
+    until [ "$ENTRYTIMESTAMP" = "" ]; do
+        echo "    "ENTRY
+        echo "    "-----
+        echo "    "Entry Time Stamp
+        echo "    "$ENTRYTIMESTAMP
+        echo "    "Entry Hash
+        ENTRYHASH=$(echo $RESULT | awk -v INDEX="$(($ENTRYINDEX + 2))" '{printf $INDEX}')
+        echo "    "$ENTRYHASH
+        factom-cli get entry $ENTRYHASH 
+        ((ENTRYINDEX+=7))
+        ENTRYTIMESTAMP=$(echo $RESULT | awk -v INDEX="$ENTRYINDEX" '{printf $INDEX}')
+    echo
+    done
+done
+echo
+echo
+
+
+: <<'EOF'
+
 for ((i=0; i < 100; i++)); do
     for ((j=0; j < 500; j++)); do
     echo $i $j | factom-cli put -c $CHAINIDGOOD -e $i -e $j dummy5 &
@@ -762,7 +798,6 @@ for ((i=0; i < 100; i++)); do
 echo $(($i+1)) of 100 groups of 500 finished
 sleep 1
 done
-echo
 
 EOF
 
