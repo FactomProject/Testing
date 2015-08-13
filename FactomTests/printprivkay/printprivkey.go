@@ -61,17 +61,19 @@ func main() {
     
     fmt.Printf("wallet:%v\n", wallet)
     
-    addr, _ := hex.DecodeString("EC1odMm6FzzpPrsA9mAVUex81FrP9EamNPTRomJWZqyKeLXn43aM")
+    //addr, _ := hex.DecodeString("EC1odMm6FzzpPrsA9mAVUex81FrP9EamNPTRomJWZqyKeLXn43aM")
     
-    we := wallet.GetAddressDetailsAddr(addr)
+	we := factoidState.GetDB().GetRaw([]byte(fct.W_NAME), []byte("dan"))
+	    
     
     if we == nil {
     	fmt.Println("Wallet entry not found")
     	return
     }
-    pub := we.GetKey(0)
-    pri := we.GetPrivKey(0)
-    fmt.Printf("Public Key:  %x\n", pub)
-    fmt.Printf("Private Key: %x\n", pri)
+    fmt.Printf("we:%v\n", we)
+   // pub := (we.(wallet.IWalletEntry)).GetKey(0)
+    //pri := (we.(wallet.IWalletEntry)).GetPrivKey(0)
+   // fmt.Printf("Public Key:  %x\n", pub)
+    //fmt.Printf("Private Key: %x\n", pri)
     
 }
