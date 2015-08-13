@@ -16,10 +16,10 @@ import (
     "github.com/FactomProject/factoid/state/stateinit"
     "github.com/FactomProject/factoid/state"
     "github.com/FactomProject/factoid/block"
-    "github.com/FactomProject/factoid/wallet"
     "github.com/FactomProject/factoid/database"
     "github.com/FactomProject/ed25519"
     "math/rand"
+	"github.com/FactomProject/FactomCode/util"        
   )
 
 var (
@@ -39,25 +39,39 @@ var (
     _ = database.MapDB{}
 )
 
+var (
+    cfg = util.ReadConfig().Wallet
+    IpAddress        = cfg.Address
+    PortNumber       = cfg.Port
+    applicationName  = "Factom/fctwallet"
+    dataStorePath    = cfg.DataFile
+    refreshInSeconds = cfg.RefreshInSeconds
+    
+    ipaddressFD      = "localhost:"
+    portNumberFD     = "8088"
+    
+    databasefile     = "factoid_wallet_bolt.db"
+)
+
+var factoidState = stateinit.NewFactoidState(cfg.BoltDBPath + databasefile)
+
 func main() {
     // Get a wallet
-    wallet := new(wallet.SCWallet)          // make me a wallet
-    wallet.Init()
-    // Generate a Random Seed
-    seed := fct.Sha([]byte(fmt.Sprintf("asdfjkoergipupdiofbd;;aerled: %v",time.Now().UnixNano()))).Bytes()
-    // Randomize the address generation.  This should be very random, and destroyed for security
-    wallet.NewSeed(seed)
+    wallet := factoidState.GetWallet()    
     
-    addr, err := wallet.GenerateECAddress([]byte("dan"))
-    if err != nil {
-        fmt.Println(err)
-        return
+    fmt.Printf("wallet:%v\n", wallet)
+    
+    addr, _ := hex.DecodeString("EC1odMm6FzzpPrsA9mAVUex81FrP9EamNPTRomJWZqyKeLXn43aM")
+    
+    we := wallet.GetAddressDetailsAddr(addr)
+    
+    if we == nil {
+    	fmt.Println("Wallet entry not found")
+    	return
     }
-    
-    we := wallet.GetAddressDetailsAddr(addr.Bytes())
     pub := we.GetKey(0)
     pri := we.GetPrivKey(0)
     fmt.Printf("Public Key:  %x\n", pub)
-    fmt.Printf("Private Key: %x\n             %x\n", pri[:])
+    fmt.Printf("Private Key: %x\n", pri)
     
 }
