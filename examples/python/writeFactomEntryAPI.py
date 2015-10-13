@@ -20,6 +20,7 @@ import hashlib
 import struct
 
 # replace this private key with a 32 byte hex string which is random
+# run the code to find the Entry Credit address to buy credits for
 privateECKey = "0000000000000000000000000000000000000000000000000000000000000000"
 
 # values to build an entry out of:
