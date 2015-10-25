@@ -9,9 +9,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-
+    "net/http"
+ 	"html/template"
 	"github.com/FactomProject/factom"
 	ed "github.com/agl/ed25519"
+ 	"bytes"
 )
 
 var (
@@ -24,16 +26,46 @@ type OrderBook struct {
 	BTC_USD json.RawMessage
 }
 
+type PassJSON struct {
+    PoloniexData string
+}
+
 func main() {
+ 	http.HandleFunc("/", renderGraph)                   //set up handler for generating graph
+    go http.ListenAndServe(":8094", nil)                //start webserver goroutine (non-blocking)
+    Open("http://localhost:8094")                       //open user's browser, to view graph
+    select{}                                            //sleep forever (until manual termination)
+}  
+    
+func renderGraph(w http.ResponseWriter, r *http.Request) {
 	es, err := getValidEntries()
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	for _, e := range es {
-		fmt.Println(string(e.Content))
+
+    var buffer bytes.Buffer                             //used to store/pass JSON data
+    
+    buffer.WriteString("[")                             //begin JSON array
+	for i, e := range es {
+        buffer.WriteString(string(e.Content))           //add Valid Entry to JSON array
+		if i < len(es) - 1 {
+		    buffer.WriteString(",")                     //comma-delimit objects in JSON array
+		}
 	}
-	fmt.Println(len(es), "Valid Entries")
+	buffer.WriteString("]")                             //end JSON array
+    
+    t, err := template.ParseFiles("linechart.html")     //parse d3.js template file
+    if err != nil {
+        fmt.Println("Template parse error: ", err.Error())
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    
+    passData := PassJSON{string(buffer.Bytes())}        //prepare JSON array to be passed to page
+
+    if err := t.Execute(w, passData); err != nil {      //pass JSON array to be graphed with d3.js
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
 }
 
 func getValidEntries() ([]*factom.Entry, error) {
