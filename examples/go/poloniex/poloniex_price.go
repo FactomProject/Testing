@@ -33,12 +33,10 @@ type PassJSON struct {
 func main() {
     //set up handler for generating graph
  	http.HandleFunc("/", renderGraph)
-    //start webserver goroutine (non-blocking)                
-    go http.ListenAndServe(":8094", nil)
     //open user's browser, to view graph
     Open("http://localhost:8094")
-    //sleep forever (until manual termination)
-    select{}
+    //start webserver     
+    http.ListenAndServe(":8094", nil)
 }  
     
 func renderGraph(w http.ResponseWriter, r *http.Request) {
