@@ -99,6 +99,10 @@
     var btcLine = d3.svg.line()
         .x(function(d) { return x(d.date); })
         .y(function(d) { return y(d.btcPrice); });
+
+    var factoidDollarLine = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.factoidDollarPrice); });
     
     var svg = d3.select("#priceGraph").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -118,6 +122,7 @@
         d.bHighBid = d['BTC_USD']['bids'][0][0];
         d.factoidPrice = (parseFloat(d.fLowAsk) + parseFloat(d.fHighBid)) / 2; 
         d.btcPrice = (parseFloat(d.bLowAsk) + parseFloat(d.bHighBid)) / 2; 
+        d.factoidDollarPrice = (d.btcPrice * d.factoidPrice)
       });
 
       x.domain(d3.extent(data, function(d) { return d.date; }));
@@ -159,10 +164,23 @@
                     .attr("d", btcLine(data));
                     
             yAxLabel.text("Price ($)");         //update y-axis label
-            document.getElementById("updateButton").value = "View Factoid Price";           //update button text
+            document.getElementById("updateButton").value = "View Factoid Price ($)";           //update button text
             document.getElementById("displayTitle").innerHTML = "Poloniex Bitcoin Price";   //update title/header
 
-        } else {
+        } else if(whatIsShown === "B"){
+            whatIsShown = "FD";
+        	// Scale the range of the data again 
+            y.domain(d3.extent(data, function(d) { return d.factoidDollarPrice; }));
+
+            // Make the changes
+                trans.select(".line")           //update line
+                    .duration(750)
+                    .attr("d", factoidDollarLine(data));
+                    
+            yAxLabel.text("Price ($)");       //update y-axis label
+            document.getElementById("updateButton").value = "View Factoid Price (฿)";           //update button text
+            document.getElementById("displayTitle").innerHTML = "Poloniex Factoid Price ($)";   //update title/header
+        } else { //whatIsShown === "FD"
             whatIsShown = "F";
         	// Scale the range of the data again 
             y.domain(d3.extent(data, function(d) { return d.factoidPrice; }));
@@ -174,7 +192,7 @@
                     
             yAxLabel.text("Price (฿)");       //update y-axis label
             document.getElementById("updateButton").value = "View Bitcoin Price";           //update button text
-            document.getElementById("displayTitle").innerHTML = "Poloniex Factoid Price";   //update title/header
+            document.getElementById("displayTitle").innerHTML = "Poloniex Factoid Price (฿)";   //update title/header
         }
         trans.select(".x.axis") // change the x axis
             .duration(300)
