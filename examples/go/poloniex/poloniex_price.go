@@ -31,10 +31,14 @@ type PassJSON struct {
 }
 
 func main() {
- 	http.HandleFunc("/", renderGraph)                   //set up handler for generating graph
-    go http.ListenAndServe(":8094", nil)                //start webserver goroutine (non-blocking)
-    Open("http://localhost:8094")                       //open user's browser, to view graph
-    select{}                                            //sleep forever (until manual termination)
+    //set up handler for generating graph
+ 	http.HandleFunc("/", renderGraph)
+    //start webserver goroutine (non-blocking)                
+    go http.ListenAndServe(":8094", nil)
+    //open user's browser, to view graph
+    Open("http://localhost:8094")
+    //sleep forever (until manual termination)
+    select{}
 }  
     
 func renderGraph(w http.ResponseWriter, r *http.Request) {
@@ -42,28 +46,34 @@ func renderGraph(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-    var buffer bytes.Buffer                             //used to store/pass JSON data
-    
-    buffer.WriteString("[")                             //begin JSON array
+    //used to store/pass JSON data
+    var buffer bytes.Buffer
+    //begin JSON array
+    buffer.WriteString("[")
 	for i, e := range es {
-        buffer.WriteString(string(e.Content))           //add Valid Entry to JSON array
+        //add Valid Entry to JSON array
+        buffer.WriteString(string(e.Content))
 		if i < len(es) - 1 {
-		    buffer.WriteString(",")                     //comma-delimit objects in JSON array
+            //comma-delimit objects in JSON array
+		    buffer.WriteString(",")
 		}
 	}
-	buffer.WriteString("]")                             //end JSON array
-    
-    t, err := template.ParseFiles("linechart.html")     //parse d3.js template file
+    //end JSON array
+	buffer.WriteString("]")
+	
+    //parse d3.js template file
+    t, err := template.ParseFiles("linechart.html")
     if err != nil {
         fmt.Println("Template parse error: ", err.Error())
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
     
-    passData := PassJSON{string(buffer.Bytes())}        //prepare JSON array to be passed to page
+    //prepare JSON array to be passed to page
+    passData := PassJSON{string(buffer.Bytes())}
 
-    if err := t.Execute(w, passData); err != nil {      //pass JSON array to be graphed with d3.js
+    //pass JSON array to be graphed with d3.js
+    if err := t.Execute(w, passData); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }
 }
