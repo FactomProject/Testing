@@ -76,8 +76,8 @@ func main() {
 	e := factom.NewEntry()
 	// not the real chain
 	e.ChainID = "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b"
-	e.ExtIDs = append(e.ExtIDs, hex.EncodeToString(sig[:]))
-	e.Content = hex.EncodeToString(data)
+	e.ExtIDs = append(e.ExtIDs, sig[:])
+	e.Content = data
 
 	if err := factom.CommitEntry(e, "poloniex"); err != nil {
 		log.Fatal(err)
