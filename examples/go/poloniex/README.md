@@ -26,17 +26,17 @@ Steps 1 and 3 should be enough in [this tutuorial](https://confluence.atlassian.
 
 ###### Install Golang
 
-Download [the latest version of go](https://golang.org/dl/).  This example uses 64 bit Linux and 1.5.1 is the latest version.
+Download [the latest version of Go](https://golang.org/dl/).  This example uses 64 bit Linux and 1.5.1 is the latest version.
 ```
 sudo tar -C /usr/local -xzf go1.5.1.linux-amd64.tar.gz
 ```
 
-On Mac, [installing go this way](http://www.cyberciti.biz/faq/installing-go-programming-language-on-mac-os-x/) should work.
+On Mac, [installing Go this way](http://www.cyberciti.biz/faq/installing-go-programming-language-on-mac-os-x/) should work.
 
 
 ###### Setup Paths
 
-Put the go binary directory in you path.
+Put the Go binary directory in you path.
 Open the file `~/.profile` and add these lines to the bottom.  If they are not exact, then your Linux may not be bootable.
 ```
 export PATH=$PATH:/usr/local/go/bin
@@ -47,7 +47,7 @@ In the same `~/.profile` file and add these lines to the bottom.  If they are no
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 ```
-**logout and login**.  This is the most straightforward way to run/test these changes.
+**Logout and login**.  This is the most straightforward way to run/test these changes.
 
 
 ### Install Factom
