@@ -26,7 +26,7 @@ Steps 1 and 3 should be enough in [this tutuorial](https://confluence.atlassian.
 
 ###### Install Golang
 
-Download [latest version of go](https://golang.org/dl/).  This example uses 64 bit Linux and 1.5.1 is the latest version.
+Download [the latest version of go](https://golang.org/dl/).  This example uses 64 bit Linux and 1.5.1 is the latest version.
 ```
 sudo tar -C /usr/local -xzf go1.5.1.linux-amd64.tar.gz
 ```
