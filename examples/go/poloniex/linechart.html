@@ -126,8 +126,8 @@
       });
 
       x.domain(d3.extent(data, function(d) { return d.date; }));
-      y.domain(d3.extent(data, function(d) { return d.factoidPrice; }));
-
+      y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidPrice - (d.factoidPrice*0.1); })), d3.max(data, function(d) { return d.factoidPrice; })]);
+      
       svg.append("g")
           .attr("class", "x axis")
           .attr("transform", "translate(0," + height + ")")
@@ -155,7 +155,7 @@
         if(whatIsShown === "F") {
             whatIsShown = "B";
         	// Scale the range of the data again 
-            y.domain(d3.extent(data, function(d) { return d.btcPrice; }));
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.btcPrice - (d.btcPrice*0.1); })), d3.max(data, function(d) { return d.btcPrice; })]);
 
 
             // Make the changes
@@ -170,8 +170,8 @@
         } else if(whatIsShown === "B"){
             whatIsShown = "FD";
         	// Scale the range of the data again 
-            y.domain(d3.extent(data, function(d) { return d.factoidDollarPrice; }));
-
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidDollarPrice - (d.factoidDollarPrice*0.1); })), d3.max(data, function(d) { return d.factoidDollarPrice; })]);
+            
             // Make the changes
                 trans.select(".line")           //update line
                     .duration(750)
@@ -183,8 +183,8 @@
         } else { //whatIsShown === "FD"
             whatIsShown = "F";
         	// Scale the range of the data again 
-            y.domain(d3.extent(data, function(d) { return d.factoidPrice; }));
-
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidPrice - (d.factoidPrice*0.1); })), d3.max(data, function(d) { return d.factoidPrice; })]);
+            
             // Make the changes
                 trans.select(".line")           //update line
                     .duration(750)
