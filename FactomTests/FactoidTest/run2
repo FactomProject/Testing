@@ -1,10 +1,11 @@
 #!/bin/bash          
 rm transTest.tst
 rm fct_test.db
-LIMIT=10000
+LIMIT=4
 until [ $LIMIT -lt 1 ]; do
     echo "run..."
-    go test >> transTest.tst 2>> transTest.tst
+    rm fct_test.db
+    go test > transTest.tst 2> transTest.tst
     echo "Gawk..."
     gawk -f validate.awk transTest.tst
     rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi

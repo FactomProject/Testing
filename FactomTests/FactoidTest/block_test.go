@@ -61,18 +61,20 @@ func PrtTrans(t fct.ITransaction){
 // tests if we like.
 func Test_create_genesis_FactoidState (test *testing.T) {
     randomize       := int64(0)
-    numBlocks       := 5
-    numTransactions := 2      // Maximum Transactions
-    maxIn           := 1
-    maxOut          := 1
+    
+    numBlocks       := 15
+    
+    // Average number of BTC transactions per block is <1000 as of Aug 8, 2015
+    // https://blockchain.info/charts/n-transactions-per-block
+    numTransactions := 10     // Maximum Transactions
+    
+    
     if testing.Short() {
         fmt.Print("\nDoing Short Tests\n")
         numBlocks       = 5
         numTransactions = 20
-        maxIn           = 5
-        maxOut          = 5
     }
-    
+    block.UpdateAmount(10000000)
     if randomize == 0 {
         randomize = time.Now().UnixNano()
         rand.Seed(randomize)
@@ -110,8 +112,6 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         fs.SetDB(new(database.MapDB))
         fs.GetDB().Init()
     }
-    // Make the coinbase very generous
-    block.UpdateAmount(10000000)
     
     // Set the price for Factoids
     fs.SetFactoshisPerEC(100000)
@@ -126,14 +126,14 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         test.Fail()
         return
     }
-    
-     // Print the Genesis Block.  If we don't know the past, then print it.
-     past := fs.GetTransactionBlock(pre.GetPrevKeyMR())
-     if past == nil {
-        for _,trans := range pre.GetTransactions() {
-            PrtTrans(trans)
-        }
-     }
+        
+    // Print the Genesis Block.  If we don't know the past, then print it.
+    past := fs.GetTransactionBlock(pre.GetPrevKeyMR())
+    if past == nil {
+    for _,trans := range pre.GetTransactions() {
+        PrtTrans(trans)
+    }
+    }
      
     if err != nil {
         fct.Prtln("Failed to load:", err)
@@ -155,7 +155,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         cp.CP.AddUpdate(
             "This Block",
             "status",                                                              // Category 
-            fmt.Sprintf("Number of Transactions in this block: %d",
+            fmt.Sprintf("Number of Transactions we are putting in this block: %d",
                         thisRunLimit),
                         "",
                         0)
@@ -168,6 +168,10 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         for j:=fs.stats.transactions; fs.stats.transactions < j+thisRunLimit; {      // Execute for some number RECORDED transactions
             transCnt++
             periodvalue := thisRunLimit/10 
+            delta := thisRunLimit/10/4
+            if delta == 0 { delta = 1 }
+            if rand.Int()%100 > 50 { delta = -delta }
+            periodvalue += delta
             if periodvalue == 0 { periodvalue = 1 }
             
             if periodMark <=10 && transCnt%(periodvalue)==0 {
@@ -175,7 +179,7 @@ func Test_create_genesis_FactoidState (test *testing.T) {
                 periodMark++
             }
             
-            tx := fs.newTransaction(maxIn,maxOut)
+            tx := fs.newTransaction()
             
             addtest := true
             flip := rand.Int()%100
@@ -306,35 +310,39 @@ func Test_create_genesis_FactoidState (test *testing.T) {
         blk := fs.GetCurrentBlock().GetNewInstance().(block.IFBlock)
         err = blk.UnmarshalBinary(blkdata)
         if err != nil { test.Fail(); return }
-        if len(blkdata)>maxblk {
-            maxblk = len(blkdata)
-            cp.CP.AddUpdate(
-                "maxblocksize",                                   // tag
-                "info",                                           // Category 
-                fmt.Sprintf("Max Block Size: %dK",maxblk/1024),   // Title
-                "",                                               // Msg
-                0)                                                // Expires  
-        }
-        sec1    := fs.stats.TransactionsPerSec()
-        sec2    := fs.stats.TotalTransactionsPerSec()
-        cp.CP.AddUpdate(
-            "transpersec",                                    // tag
-            "info",                                           // Category 
-            fmt.Sprintf("Transactions per second %4.2f, (+ bad) %4.2f",sec1,sec2), // Title
-                        "",                                   // Msg
-                        0)                                    // Expires  
+        
         fmt.Println("Block Check")
-        blk1   := fs.GetCurrentBlock()
-        blk1MR := fs.GetCurrentBlock().GetHash()
+        
+        // Collect our block pointers, MR Key, and LMR Key before we process the end of block
+        blk1     := fs.GetCurrentBlock()
+        blk1KMR  := blk1.GetHash()
+        blk1LKMR := blk1.GetLedgerKeyMR()
+        
+        // Process the end of block.  This simulates what Factomd will do.
         fmt.Println("ProcessEndOfBlock")
         fs.ProcessEndOfBlock()             // Process the block.
         fmt.Println("Check ProcessEndOfBlock")
-        blk2PMR := fs.GetCurrentBlock().GetPrevKeyMR()
-        if !bytes.Equal(blk1MR.Bytes(),blk2PMR.Bytes()) {
+        
+        // Collect the new block pointer, Previous MR Key and LMR Key after we processed the block.
+        blk2      := fs.GetCurrentBlock()
+        blk2PKMR  := blk2.GetPrevKeyMR()
+        blk2PLKMR := blk2.GetPrevLedgerKeyMR()
+        
+        // Check that the Previous MR and LMR match what we had from the previous block.
+        if !bytes.Equal(blk1KMR.Bytes(),blk2PKMR.Bytes()) {
             fmt.Println("MR's don't match")
             test.Fail()
             return
         }
+        if !bytes.Equal(blk1LKMR.Bytes(),blk2PLKMR.Bytes()) {
+            fmt.Println("LKMR's don't match")
+            fmt.Println(" block: ",blk1LKMR)
+            fmt.Println(" Prev:  ",blk2PLKMR)
+            test.Fail()
+            return
+        }
+        
+        // Now we marshal and unmarshal to simulate a reboot, getting our blocks for the DB
         data, err := blk1.MarshalBinary()
         if err != nil {
             fmt.Println("Failed to Marshal")
@@ -348,45 +356,78 @@ func Test_create_genesis_FactoidState (test *testing.T) {
             test.Fail()
             return
         }
-        if !bytes.Equal(blk2PMR.Bytes(),blk1b.GetKeyMR().Bytes()) {
-            fmt.Println("Unmarshaled MR doesn't match")
+        
+        // Does the marshal and unmarshal of the block yeild the same MR and LMR?  If so GOOD!
+        if !bytes.Equal(blk2PKMR.Bytes(),blk1b.GetKeyMR().Bytes()) {
+            fmt.Println("Unmarshaled KeyMR values do not match")
+            test.Fail()
+            return
+        }
+        if !bytes.Equal(blk2PLKMR.Bytes(),blk1b.GetLedgerKeyMR().Bytes()) {
+            fmt.Println("Unmarshaled LedgerKeyMR values do not match")
             test.Fail()
             return
         }
         
         
         
-        c := 1
-        keys := make([]string, 0, len(fs.stats.errors))
-        for k := range fs.stats.errors {
-            keys = append(keys, k)
-        }
-        for i := 0; i<len(keys)-1; i++ {
-            for j:=0;j<len(keys)-i-1; j++ {
-                if keys[j]<keys[j+1] {
-                    t := keys[j]
-                    keys[j] = keys[j+1]
-                    keys[j+1]=t
+        /************************************************************
+         *                Reporting to the Control Panel
+         ************************************************************/
+        { 
+            c := 1
+            keys := make([]string, 0, len(fs.stats.errors))
+            for k := range fs.stats.errors {
+                keys = append(keys, k)
+            }
+            for i := 0; i<len(keys)-1; i++ {
+                for j:=0;j<len(keys)-i-1; j++ {
+                    if keys[j]<keys[j+1] {
+                        t := keys[j]
+                        keys[j] = keys[j+1]
+                        keys[j+1]=t
+                    }
                 }
             }
-        }
-        var out bytes.Buffer
-        for _,key := range keys {
-            ecnt := fs.stats.errors[key]
-            by  := []byte(fs.stats.full[key])
-            prt := string(by)
-            if len(prt)>80 { prt = string(by[:80])+"..." }
-            prt = strings.Replace(prt,"\n"," ",-1)
-            out.WriteString(fmt.Sprintf("%6d %s\n",ecnt,prt))
-            c++
-        }
-         cp.CP.AddUpdate(
+            var out bytes.Buffer
+            for _,key := range keys {
+                ecnt := fs.stats.errors[key]
+                by  := []byte(fs.stats.full[key])
+                prt := string(by)
+                if len(prt)>80 { prt = string(by[:80])+"..." }
+                prt = strings.Replace(prt,"\n"," ",-1)
+                out.WriteString(fmt.Sprintf("%6d %s\n",ecnt,prt))
+                c++
+            }
+            
+            cp.CP.AddUpdate(
                 "transerrors",                                    // tag
                 "errors",                                         // Category 
-                "Transaction Errors Detected:",                   // Title
+                "Transaction Info & Errors:",                     // Title
                 "<pre>"+string(out.Bytes())+"</pre>",             // Msg
-                0)                                                // Expires  
+                0)                                                // Expires
+            
+        }
         
+        if len(blkdata)>maxblk {
+            maxblk = len(blkdata)
+            cp.CP.AddUpdate(
+                "maxblocksize",                                   // tag
+                "info",                                           // Category 
+                fmt.Sprintf("Max Block Size: %dK",maxblk/1024),   // Title
+                "",                                               // Msg
+                0)                                                // Expires  
+        }
+         
+         sec1    := fs.stats.TransactionsPerSec()
+         sec2    := fs.stats.TotalTransactionsPerSec()
+         
+         cp.CP.AddUpdate(
+                "transpersec",                                    // tag
+                "status",                                         // Category 
+                fmt.Sprintf("Transactions per second %4.2f, (+ bad) %4.2f",sec1,sec2), // Title
+                "",                                               // Msg
+                0)                                                // Expires  
     }
     fmt.Println("\nDone")
 //     // Get the head of the Factoid Chain

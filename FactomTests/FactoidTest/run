@@ -1,7 +1,7 @@
 #!/bin/bash          
 rm transTest.tst
 rm fct_test.db
-LIMIT=10000
+LIMIT=20000
 until [ $LIMIT -lt 1 ]; do
     echo "run..."
     go test >> transTest.tst 2>> transTest.tst
@@ -9,4 +9,5 @@ until [ $LIMIT -lt 1 ]; do
     gawk -f validate.awk transTest.tst
     rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
     let LIMIT=LIMIT-1
+    sleep 1s
 done

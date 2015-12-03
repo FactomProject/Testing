@@ -28,6 +28,8 @@ type Stats struct {
     full map[string]string
     start time.Time
     blocktimes []time.Time
+    AvgBal uint64
+    MaxBal uint64
 }
 func (s *Stats) begin() {
     s.start = time.Now()
@@ -78,10 +80,10 @@ func(fs *Test_state) Init(test *testing.T) {
         fs.inputAddresses = append(fs.inputAddresses,addr)
         fs.outputAddresses = append(fs.outputAddresses,addr)
     }
+    t := fct.NewHash([]byte(fmt.Sprintf("Test State and Balances %v",time.Now().UnixNano()))).String()
+    fs.twallet.NewSeed([]byte("Test State and Balances"+t))
     
-    fs.twallet.NewSeed([]byte("Test State and Balances"))
-    
-    for i:=0; i<500; i++ {
+    for i:=0; i<10000; i++ {
         addr, err := fs.twallet.GenerateFctAddress([]byte("testout_"+cv.Itoa(i)),1,1)
         if err != nil { fct.Prtln(err); test.Fail() }
         fs.outputAddresses = append(fs.outputAddresses,addr)
@@ -106,30 +108,73 @@ func(fs *Test_state) GetTime32() int64 {
     return time.Now().Unix()
 }
 
-func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
-    var max,sum uint64
+// Returns a number for the number of inputs, outputs
+// or ecoutputs for a transaction.  We spread the odds
+// over the magnitude of possible values.
+func(fs *Test_state) getRnd() (num int) {
+
+    sw := rand.Int() % 100  // Odds are expressed in percentages
+    
+    switch {
+        case sw < 80:               // 80%
+            num = 0x1               // 1 num range
+        case sw < 90:               // 10%
+            num = rand.Int()%3 + 2  // 2 to 4 num range
+        case sw < 95:               // 5%
+            num = rand.Int()%6 + 5  // 5 to 10 num range
+        case sw < 96:               // 1%
+            num = 0                 // 0 
+        case sw < 97:               // 1%
+            num = rand.Int()%11+11  // 11 to 20 num range
+        case sw < 98:
+            num = rand.Int()%11+21  // 21 to 30 num range
+        case sw < 99:
+            num = rand.Int()%11+31  // 31 to 40 num range
+        case sw <100:
+            num = rand.Int()%215+41 // 41 to 255 num range
+    }
+    
+    return num
+}
+
+func(fs *Test_state) newTransaction() fct.ITransaction {
+    var maxBal,sum uint64
     fs.inputAddresses = make([]fct.IAddress,0,20)
+    
     for _,output := range fs.outputAddresses {
         bal := fs.GetBalance(output)
-        if bal > 100000 {
+        if bal > 100000000 {
             fs.inputAddresses = append(fs.inputAddresses, output)
             sum += bal
         }
-        if max < bal {
-            max = bal
+        if maxBal < bal {
+            maxBal = bal
         }
+    }
+    
+    avgBal := sum/uint64(len(fs.inputAddresses))
+    
+    if fs.stats.transactions == 0 {
+        fs.stats.MaxBal = maxBal
+        fs.stats.AvgBal = avgBal
+    }else{
+        fs.stats.MaxBal = (fs.stats.MaxBal*uint64(fs.stats.transactions)+maxBal)/uint64(fs.stats.transactions+1)
+        fs.stats.AvgBal = (fs.stats.AvgBal*uint64(fs.stats.transactions)+avgBal)/uint64(fs.stats.transactions+1)
     }
     
     cp.CP.AddUpdate(
         "Test max min inputs",                                               // tag
         "info",                                                              // Category 
         "Tests generation",                                                  // Title
-          fmt.Sprintf("Input Addresses %d\nMax balance %s, Average Balance %s",
+          fmt.Sprintf("Input Addresses %d\n"+
+                      "Total Max balance %15s, Average Balance %15s\n"+
+                      "Last  Max balance %15s, Average Balance %16s",
              len(fs.inputAddresses),
-             strings.TrimSpace(fct.ConvertDecimal(max)),
-             strings.TrimSpace(fct.ConvertDecimal(sum/uint64(len(fs.inputAddresses))))),    // Msg
-        60)                                                                  // Expire 
-    
+             strings.TrimSpace(fct.ConvertDecimal(fs.stats.MaxBal)),
+             strings.TrimSpace(fct.ConvertDecimal(fs.stats.AvgBal)),
+             strings.TrimSpace(fct.ConvertDecimal(maxBal)),
+             strings.TrimSpace(fct.ConvertDecimal(avgBal))),                  // Msg
+        0)                                                                   // Expire 
     
     // The following code is a function that creates an array
     // of addresses pulled from some source array of addresses
@@ -137,53 +182,29 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
     var makeList = func(source []fct.IAddress, cnt int) []fct.IAddress{
         adrs := make([]fct.IAddress,0,cnt)
         for len(adrs)<cnt {
-            i := rand.Int()%len(source)
+            var i int
+            if len(source) == 0 { return adrs }
+            i = rand.Int()%len(source)
             adr := source[i]
             adrs = append(adrs,adr)
         }
         return adrs
     }
-
-    mIn := maxIn
-    mOut := maxOut
-    mEc  := maxOut
-    
-    // Distribute our randomness over various spaces.  This doesn't
-    // make for realistic transactions, but we don't care so much.
-    joker := rand.Int()%100
-    if joker < 1 { mIn = maxIn*2 }
-    if joker < 2 { mIn = maxIn*4 }
-    if joker < 3 { mIn = maxIn*8 }
-    if joker < 4 { mIn = maxIn*16 }
-    if joker < 5 { mIn = maxIn*32 }
-    if joker < 6 { mIn = maxIn*64 }
-    joker = rand.Int()%100
-    if joker < 1 { mOut = maxOut*2 }
-    if joker < 2 { mOut = maxOut*4 }
-    if joker < 3 { mOut = maxOut*8 }
-    if joker < 4 { mOut = maxOut*16 }
-    if joker < 5 { mOut = maxOut*32 }
-    if joker < 6 { mOut = maxOut*64 }
-    joker = rand.Int()%100
-    if joker < 1 { mEc = maxOut*2 }
-    if joker < 2 { mEc = maxOut*4 }
-    if joker < 3 { mEc = maxOut*8 }
-    if joker < 4 { mEc = maxOut*16 }
-    if joker < 5 { mEc = maxOut*32 }
-    if joker < 6 { mEc = maxOut*64 }
-    
+        
     // Get one to five inputs, and one to five outputs
-    numInputs := rand.Int()%mIn+1
-    numOutputs := rand.Int()%mOut
-    mumECOutputs := rand.Int()%mEc
+    numInputs := fs.getRnd()
+    numOutputs := fs.getRnd()
+    mumECOutputs := fs.getRnd()
  
- 
+    if avgBal > 10000000000 { 
+        numOutputs = 0 
+    } // Throw away Factoids if too much money in the system
+    
     lim := len(fs.inputAddresses)-2
     if lim <= 0 {lim = 1}
     numInputs = (numInputs%(lim))+1
 
    // fmt.Println("inputs outputs",numInputs,numOutputs, "limits",len(fs.inputAddresses),len(fs.outputAddresses))
-    
     
     // Get my input and output addresses
     inputs := makeList(fs.inputAddresses,numInputs)
@@ -197,7 +218,7 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
         paid = toPay+paid
         fs.twallet.AddInput(t,adr, toPay)
     }
-    
+        
     paid = paid - fs.GetFactoshisPerEC()*uint64(len(ecoutputs))
     
     for _, adr := range outputs {
@@ -233,7 +254,7 @@ func(fs *Test_state) newTransaction(maxIn, maxOut int) fct.ITransaction {
         fs.stats.errors[string(str)] += 1
         fs.stats.full[string(str)] = err.Error()
         
-        return fs.newTransaction(maxIn,maxOut) 
+        return fs.newTransaction() 
     }
     return t
 }

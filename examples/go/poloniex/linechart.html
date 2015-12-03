@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <title>Poloniex Price Chart</title>
+    </head> 
+    <meta charset="utf-8">
+    <style>
+
+    body {
+      font: 11px sans-serif;
+      background-color: black;
+      color: white;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: white;
+      shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+      stroke: white;
+      stroke-width: 1px;
+    }
+
+    .line {
+      fill: none;
+      stroke: steelblue;
+      stroke-width: 1.5px;
+    }
+    
+    #priceGraph {
+        position:absolute;
+        float:left;
+        z-index:10;
+        fill: white;
+    } 
+    
+    #controlDiv {
+        position:absolute;
+        top: 0px;
+        right: 4em;
+        height: 100%;
+    }
+    
+    #buttonDiv {
+      position: relative;
+      top: 50%;
+      z-index:20;
+    }
+    
+    </style>
+    <body>
+        <h1 id="displayTitle">Poloniex Factoid Price</h1>
+        <div id="priceGraph"></div>
+        <div id="controlDiv">
+            <div id="buttonDiv">
+                <input id="updateButton" 
+                       type="button" 
+                       value="View Bitcoin Price" 
+                       onclick="updateData()" />
+            </div>
+        </div>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script>
+    var whatIsShown = "F";
+    var myData = {{ .PoloniexData }}
+
+    var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        width = 1152 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+
+    var parseDate = d3.time.format("%d-%b-%y").parse;
+
+    var x = d3.time.scale()
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+    var factoidLine = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.factoidPrice); });
+
+    var btcLine = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.btcPrice); });
+
+    var factoidDollarLine = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.factoidDollarPrice); });
+    
+    var svg = d3.select("#priceGraph").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = JSON.parse(myData);
+    
+    console.log(data)
+      
+      data.forEach(function(d) {
+        d.date = d.Timestamp * 1000;            //since it's measured in milliseconds, must multiply by 1000 to get a correct epoch value
+        d.fLowAsk = d['FCT_BTC']['asks'][0][0];
+        d.fHighBid = d['FCT_BTC']['bids'][0][0];
+        d.bLowAsk = d['BTC_USD']['asks'][0][0];
+        d.bHighBid = d['BTC_USD']['bids'][0][0];
+        d.factoidPrice = (parseFloat(d.fLowAsk) + parseFloat(d.fHighBid)) / 2; 
+        d.btcPrice = (parseFloat(d.bLowAsk) + parseFloat(d.bHighBid)) / 2; 
+        d.factoidDollarPrice = (d.btcPrice * d.factoidPrice)
+      });
+
+      x.domain(d3.extent(data, function(d) { return d.date; }));
+      y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidPrice - (d.factoidPrice*0.1); })), d3.max(data, function(d) { return d.factoidPrice; })]);
+      
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      yAxLabel = svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", "0.8em")
+          .style("text-anchor", "end")
+          .text("Price (฿)");
+
+      svg.append("path")
+          .datum(data)
+          .attr("class", "line")
+          .attr("d", factoidLine);
+
+
+    function updateData() {
+        // Select the section to apply changes to
+        var trans = d3.select("#priceGraph").transition();
+        if(whatIsShown === "F") {
+            whatIsShown = "B";
+        	// Scale the range of the data again 
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.btcPrice - (d.btcPrice*0.1); })), d3.max(data, function(d) { return d.btcPrice; })]);
+
+
+            // Make the changes
+                trans.select(".line")           //update line
+                    .duration(750)
+                    .attr("d", btcLine(data));
+                    
+            yAxLabel.text("Price ($)");         //update y-axis label
+            document.getElementById("updateButton").value = "View Factoid Price ($)";           //update button text
+            document.getElementById("displayTitle").innerHTML = "Poloniex Bitcoin Price";   //update title/header
+
+        } else if(whatIsShown === "B"){
+            whatIsShown = "FD";
+        	// Scale the range of the data again 
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidDollarPrice - (d.factoidDollarPrice*0.1); })), d3.max(data, function(d) { return d.factoidDollarPrice; })]);
+            
+            // Make the changes
+                trans.select(".line")           //update line
+                    .duration(750)
+                    .attr("d", factoidDollarLine(data));
+                    
+            yAxLabel.text("Price ($)");       //update y-axis label
+            document.getElementById("updateButton").value = "View Factoid Price (฿)";           //update button text
+            document.getElementById("displayTitle").innerHTML = "Poloniex Factoid Price ($)";   //update title/header
+        } else { //whatIsShown === "FD"
+            whatIsShown = "F";
+        	// Scale the range of the data again 
+            y.domain([Math.max(0, d3.min(data, function(d) { return d.factoidPrice - (d.factoidPrice*0.1); })), d3.max(data, function(d) { return d.factoidPrice; })]);
+            
+            // Make the changes
+                trans.select(".line")           //update line
+                    .duration(750)
+                    .attr("d", factoidLine(data));
+                    
+            yAxLabel.text("Price (฿)");       //update y-axis label
+            document.getElementById("updateButton").value = "View Bitcoin Price";           //update button text
+            document.getElementById("displayTitle").innerHTML = "Poloniex Factoid Price (฿)";   //update title/header
+        }
+        trans.select(".x.axis") // change the x axis
+            .duration(300)
+            .call(xAxis);
+        trans.select(".y.axis") // change the y axis
+            .duration(300)
+            .call(yAxis);
+
+    }
+    </script>
+
+</html>

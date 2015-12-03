@@ -3,8 +3,6 @@
 # complete before we can print.  So it already has the reward added.  But to make our
 # code work, we need to remove the reward.
 
-BEGIN { err[0]; delete err[0] }
-
 /200000000000 300000000000/ {
     $5 = 200000000000
 }
