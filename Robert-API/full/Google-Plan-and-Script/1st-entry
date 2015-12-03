@@ -1,0 +1,89 @@
+This chain contains a record of the results of testing of the Factom API since June 23, 2015. 
+
+There are two types of entries in this chain:
+
+Factom API Test Plan - the testing plan for the Factom API that was performed on a particular date
+Factom API Test Script - the script that was used to execute that plan on that date 
+
+The current version of the Factom API Test Plan is always available at https://docs.google.com/spreadsheets/d/1pGTIIEIHFgzCT13NWmajFvcwV_HbpgpNHWnAqmp7WvY/edit?pli=1#gid=3815258
+
+The current version of the Factom API Test Script is always available at https://docs.google.com/document/d/1CwFrDIxlKQoHvI9QaP0Bj47ljHywhiNaa1FqSw3pK6Y/edit?pli=1
+
+This entry (the 1st in the chain) contains:
+
+- the name of the chain "Factom API Testing" as the External ID
+
+- this explanation
+
+- the public key of the digital signature ("D. Robert Baker <drobertbaker@factom.org>") with which each authentic entry is signed
+
+Each subsequent (authentic) entry in the chain contains:
+
+- a hash of the file containing the testing data
+
+- (on the same line) the file name (which includes the date as part of the file name) of the data file
+
+- the digital signature of "D. Robert Baker <drobertbaker@factom.org>"
+
+The detection and filtering of the few intentionally included "fake" records (without an authentic signature) is left as an exercise for the so-inclined.
+
+VERIFYING AN ENTRY
+
+The signature of an entry must be verified to ensure that it was filed by an authorized party. This is done by using any digital signature verification software. 
+
+First, import the public key given below into the digital signature verification software.
+ 
+Then run the signature of an entry through the digital signature verification software. 
+
+If the signature is not verified as belonging to "D. Robert Baker <drobertbaker@factom.org>", then the entry has not been properly authorized.
+
+VERIFYING A FILE
+
+Run the file to be checked for validity through the widely available "sha256sum" software, e.g.
+
+sha256sum filename
+
+to generate a hash code for that file. 
+
+Then compare the generated hash code to the hash code given in the entry. 
+
+If they match, then the file is authentic. 
+
+If the two hash codes do not match, then the file is not the same as the one that was filed by Factom. 
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1
+
+mQENBFX6A2EBCACr3aG+4KGfkF5Op7aq6mJpjAhxhREzGo+Oh+hSNgIP8+ChOY1n
+NdZ4oLL8iEr179236ELNWLr0dYVN8tfVUqlteawnwcc9dHcFx1UCkd2rDbhaVZqj
+sSw5OlX7zYSrLI9BubHnMKVeVya5B/J5udGnVGPHvWffGE76u9xzen9z4IBBd6SY
+KebMPL2UJKuOs9UQ/Jf3FajE4msNwxjH3AcDCyylRiJy8ZFeE+YRmR5Gir6Ovwgf
+wDBWlt/mbEYCUib7YDwNIltR59ohIjfpo9Dd67PNID0i5AfRA1hR4jp6Hx7scGj0
+2IXwnsGLyrXDorhxBN2M3zidtjifk2TJdhshABEBAAG0KUQuIFJvYmVydCBCYWtl
+ciA8ZHJvYmVydGJha2VyQGZhY3RvbS5vcmc+iQE4BBMBAgAiBQJV+gNhAhsDBgsJ
+CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRD+14pkKMHFox7mB/0f549mG7Eg3SD6
+rU6QAQaz61BTBBvbc9KgPMV4AkxUXmI9DRts0YEOcgKzPRgZH6oEa2erCliwQBBN
+zgRVjBvISqaTaMpDt0nj1a+ywqFHI3m8zO1w5zCDhOZeAphKXgi/p+1FW/7cQa7q
+/cugM8UtQMKUwbAh122313It0DapLqOrkZIlOQ8C1GWo0j13KNNn9YJxmXEmzaIM
+/KXrozxE9n7FpranmffxrySf2FpkVjAisotws4QoipDDsCGIYrIZgLkRv/mFjTPn
+vihVw6BI01PmoLzkxg9zP23Ygco2H9m37+B0LNXG2MzmzekC9D9ISlAPHyAuHT98
+vhTQsifeuQENBFX6A2EBCADMzwwa+tT3r9JWQH0xiXKj7Lok7i75T7ioQIP7w6+J
+WK6yvcCFjYzCjMbBh9LrTy8pYBm8hjlTyJg9ec4sMGcGjvGoKLkd9Ir38O5J9spS
+EYHSnkhbeOOAfw7+celoewfbFCJk8Ovo8TsAgtVnTRwjlydR1B6tPYaPdJZsI4Qi
+bgSyVVdytI8eVDqAMdeNJqlpUOq8MSpIcK/G5YI50qYA2Dv1exc+WB0M+0iGIbfT
+Tztfx8oXZAHflq7qbOKDtYBpcAb3pW3B3BttTzYXK4z4TpGrGA0AKhzacNo7dGXd
+N0gP0TN3qV2Mjn/nHHdf/AWcrOz+vy1ppBoLVd/a4C5LABEBAAGJAR8EGAECAAkF
+AlX6A2ECGwwACgkQ/teKZCjBxaNdGAf/Y70UMMiUSox51cQYgJq5Xm19TnwWimwQ
+eV3wxqBsZmxTgv9FP7zMSOfMaQaP//2ECDjNKBonNcf+UGYZjxZqsl9sDrdWyZzt
+LbcFHlnDC6uy7rJDTULfkqoS/ebfF6fu2kKzwDM1vC3xujt5yAuZSTFOT7i6W2OU
+peaQa8j8mHnpUJruTeKqThYel7/6EriYF7rYREFnyAraKKZSrSAnYK5drgfWtUOj
+0qQrk5bTu99MwwMeRcJVw5mxMJAkmMk6ahd/rZ8nAikmfitFspP3Cp2xtT84v+pv
+mjZHzAsjnNcLNpR35sk8TLECTJqTKcV46qrvz9jkkvm3kFxZDKRbGg==
+=ZOBE
+-----END PGP PUBLIC KEY BLOCK-----
+
+  
+
+
+
+

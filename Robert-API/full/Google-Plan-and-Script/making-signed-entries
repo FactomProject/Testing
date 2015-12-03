@@ -1,0 +1,59 @@
+***TEST PLAN ENTRIES***
+
+cd ~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ sha256sum "Factom API Test Plan 20150923.ods" >"Factom API Test Plan 20150923.ods.hash"
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ cat "Factom API Test Plan 20150923.ods.hash"
+f4d4c818c40961d3e7b2829df4452adb25ee7822638ec758fb1a8c7cebd43ecc  Factom API Test Plan 20150923.ods
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ gpg --clearsign "Factom API Test Plan 20150923.ods.hash"
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ cat "Factom API Test Plan 20150923.ods.hash.asc"
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+f4d4c818c40961d3e7b2829df4452adb25ee7822638ec758fb1a8c7cebd43ecc  Factom API Test Plan 20150923.ods
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWAwQNAAoJEP7XimQowcWjBqYH/iSf2GwYgZ1Tw68jckn6m+i4
+QYu0ZFHWGXOw7HXqm5QEyBd6OCvbFCswTruVDEnr2H1Laf/bpbhm7vNlBxp4fGif
+joNP++chrr4DQ2b/kvrwicqX9PvWzblDacEaPKkdjNKsbHvhJaI3iVIoBZxsBeVp
+HSGgLOOVZ/XLJiMSffUAld+Ky/xOffFTy66DEAHfTxu0U7oV1SPrI5erjRo0Q2ma
+ENRZUElmHSHmHOCTsMZfJr/gQxBoaCBmWh/2NJNZyWqrxIrY0qg9Gn3zDZ2OUKj4
+5dmvJXmEy80FyXJz72q0ugP3aWjDsrYzg85+dQsN7Gm93jeiHbA+sfjL++jz7XM=
+=wC2U
+-----END PGP SIGNATURE-----
+
+***TEST SCRIPT ENTRIES***
+
+MAKE SURE THAT FILE NAME HAS SPACES IN IT, e.g. Factom API Test Script 20150928.odt
+
+cd ~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ sha256sum "Factom API Test Script 20150923.odt" >"Factom API Test Script 20150923.odt.hash"
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ cat "Factom API Test Script 20150923.odt.hash"
+e3b6b18416fb79994746d5646f6d60979b7e4af7b2b58413202ade921cad35c0  Factom API Test Script 20150923.odt
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ gpg --clearsign "Factom API Test Script 20150923.odt.hash"
+
+~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923$ cat "Factom API Test Script 20150923.odt.hash.asc"
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+e3b6b18416fb79994746d5646f6d60979b7e4af7b2b58413202ade921cad35c0  Factom API Test Script 20150923.odt
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWAwThAAoJEP7XimQowcWjAL0H/jIpnM8Z8Z6h7KFYGddeZpV9
+n63/aO/Hrq1Tx473OG7hVEDt1NzgAysUvT3jw+dSFRgo36S4AHwHsZdNWChd5Ghd
+PiquOrnX3PIshi+kqe7G1S5ynpwPwz+GN1zH/a0pels1zH02nMjscNdu+rFMz8EM
+t0VPP6VrAFkIqTTSIYBf+MPMeoKkqFxZg5ZcKyY5sFeTYWpdjh2ZCrt3qVyW8uE2
+VQAtpZbX2OHEmfwwrQCr6ik8zCM60obeTa9z0YwEvKh5xjcT9boEIEvv4k4j7bSg
+nMRxhRPmKm4Gse8H2PDhg7n9W2hu/n1pL3v+4gu252LL8yLPP2o3JAxcmOYBnyM=
+=eCqc
+-----END PGP SIGNATURE-----
+
+

@@ -1,0 +1,68 @@
+FACTOIDWALLETADDRESSKEY01=$(factom-cli newaddress fct factoid-wallet-address-name01 FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb | awk '{print $3}')        
+echo FACTOIDWALLETADDRESSKEY01=$FACTOIDWALLETADDRESSKEY01
+
+ECWALLETADDRESSKEY01=$(factom-cli generateaddress ec ec-wallet-address-name01 | awk '{print $3}')
+echo ECWALLETADDRESSKEY01=$ECWALLETADDRESSKEY01
+
+factom-cli newtransaction transaction04
+factom-cli addinput transaction04 factoid-wallet-address-name01 10
+factom-cli addecoutput transaction04 ec-wallet-address-name01 10
+factom-cli addfee transaction04 factoid-wallet-address-name01
+factom-cli sign transaction04
+factom-cli submit transaction04
+
+DISPLAY-CHAIN ()
+{
+    ENTRYKEYMERKELROOT=$(factom-cli get chain $1)
+    echo ENTRYKEYMERKELROOT = $ENTRYKEYMERKELROOT
+    echo
+    until [ "$ENTRYKEYMERKELROOT" = '0000000000000000000000000000000000000000000000000000000000000000' -o "$ENTRYKEYMERKELROOT" = "" ]; do
+        RESULT=$(factom-cli get eblock $ENTRYKEYMERKELROOT)
+#       echo $RESULT
+        SEQNO=$(echo $RESULT | awk '{printf $2}')
+        TIMESTAMP=$(echo $RESULT | awk '{printf $8}')    
+        EBCHAINID=$(echo $RESULT | awk '{printf $4}')
+        ENTRYKEYMERKELROOT=$(echo $RESULT | awk '{printf $6}')
+        echo ENTRY BLOCK
+        echo -----------
+        echo Sequence Number - Time Stamp
+        echo $SEQNO $TIMESTAMP
+        echo Chain ID
+        echo $EBCHAINID
+        echo Previous Entry Block Key Merkel Root 
+        echo $ENTRYKEYMERKELROOT
+        echo
+        ENTRYINDEX=12
+        ENTRYTIMESTAMP=$(echo $RESULT | awk '{printf $12}')
+        until [ "$ENTRYTIMESTAMP" = "" ]; do
+            echo "    "ENTRY
+            echo "    "-----
+            echo "    "Entry Time Stamp
+            echo "    "$ENTRYTIMESTAMP
+            echo "    "Entry Hash
+            ENTRYHASH=$(echo $RESULT | awk -v INDEX="$(($ENTRYINDEX + 2))" '{printf $INDEX}')
+            echo "    "$ENTRYHASH
+            factom-cli get entry $ENTRYHASH 
+            ((ENTRYINDEX+=7))
+            ENTRYTIMESTAMP=$(echo $RESULT | awk -v INDEX="$ENTRYINDEX" '{printf $INDEX}')
+        echo
+        done
+    done
+    echo
+}
+
+factom-cli mkchain -e "Factom API Testing" ec-wallet-address-name01 <~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/1st-entry
+
+Creating Chain: 71fecdd33ea55b9608863782da1fc158b69e0cc8f283620bac670578a5603645
+
+factom-cli put -e "Factom API Test Plan 20150923.ods" -c 71fecdd33ea55b9608863782da1fc158b69e0cc8f283620bac670578a5603645 ec-wallet-address-name01 <~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923/"Factom API Test Plan 20150923.ods.hash.asc"
+
+Creating Entry: c220195cc5f82959fc5c7c3993fcc6bf542ba1665ba9bb81dc6df1cc90e4b42b
+
+factom-cli put -e "Factom API Test Script 20150923.odt" -c 71fecdd33ea55b9608863782da1fc158b69e0cc8f283620bac670578a5603645 ec-wallet-address-name01 <~/robertubuntu/testing/test-plans-and-scripts/Robert-API/full/Google-Plan-and-Script/history/20150923/"Factom API Test Script 20150923.odt.hash.asc"
+
+Creating Entry: 9f8481e2069a9c4eddd27337d0fbc472a5481462c780a9fbafc57856336f7ebb
+
+DISPLAY-CHAIN 71fecdd33ea55b9608863782da1fc158b69e0cc8f283620bac670578a5603645
+
+

@@ -1,0 +1,36 @@
+for ((i=1; i < 11; i++)); do echo "dummy$i ="$(factom-cli generateaddress fct dummy$i | awk '{print $3}'); done
+for ((i=1; i < 4; i++)); do
+    tmpkey="FACTOIDWALLETADDRESSKEY0$i"
+    tmpname="factoid-wallet-address-name0$i"
+    declare $tmpkey=$(factom-cli generateaddress fct $tmpname | awk '{print $3}')
+    echo "factoid-wallet-address-name0$i = "${!tmpkey}
+    factom-cli newtransaction dummytransaction$i
+    factom-cli addinput dummytransaction$i dummy$i 2001
+    factom-cli addoutput dummytransaction$i factoid-wallet-address-name0$i 2000
+    factom-cli sign dummytransaction$i
+    factom-cli submit dummytransaction$i
+    factom-cli balance fct factoid-wallet-address-name0$i
+done
+echo 
+
+for ((i=1; i < 4; i++)); do
+    tmpkey="FACTOIDWALLETADDRESSKEY0$i"
+    tmpname="factoid-wallet-address-name0$i"
+    factom-cli balance fct $tmpname
+    factom-cli balance fct ${!tmpkey}
+done
+
+for ((i=1; i < 3; i++)); do
+    tmpkey="ECWALLETADDRESSKEY0$i"
+    tmpname="ec-wallet-address-name0$i"
+    declare $tmpkey=$(factom-cli generateaddress ec $tmpname | awk '{print $3}')
+    echo "ec-wallet-address-name0$i = "${!tmpkey}
+done
+
+for ((i=1; i < 3; i++)); do
+    tmpkey="ECWALLETADDRESSKEY0$i"
+    tmpname="ec-wallet-address-name0$i"
+    factom-cli balance ec $tmpname
+    factom-cli balance ec ${!tmpkey}
+done
+
