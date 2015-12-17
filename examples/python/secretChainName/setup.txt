@@ -1,0 +1,19 @@
+Run:
+sudo apt-get install libssl-dev
+sudo pip install scrypt
+
+
+python chainid.py
+
+results in a moderately private chain name xxxxxxxx
+
+echo -n "" | factom-cli mkchain -e xxxxxxxx ec_address
+
+which was makes chainID yyyyyyyyy
+
+
+Then add data into the chain
+
+echo -n "hash of data to secure" | factom-cli put -c yyyyyyyyy ec_address
+
+Creating Entry: zzzzzzzzzz
