@@ -68,7 +68,7 @@ Alternatively, you can install from the Factom source code.  Directions [here](h
 
 In a terminal window run factomd.  It should look like this:
 
-![factomd](/images/factomd.png)
+![factomd](images/factomd.png)
 
 Wait for the blockchain to download and validate. It should only take a few minutes depending on your internet speed.
 
@@ -86,7 +86,7 @@ Record these 32 bytes, so they can be used later.
 
 Open both writeFactomChainAPI.py and writeFactomEntryAPI.py in a text editor and replace the 64 zeros after `privateECKey = ` with the random number.  Remove spaces and line returns from the random number.
 
-![newECkey](/images/newECkey.png)
+![newECkey](images/newECkey.png)
 
 
 Next, open a terminal and navigate to the `factom_py_examples` directory. run `python writeFactomEntryAPI.py`:
@@ -106,23 +106,23 @@ First you need to acquire some Factoids.
 
 - Run `walletapp`.  This should have been installed with factomd. It will open a web browser showing the GUI wallet.  Make sure factomd is also running when you run walletapp.
 
-![newECkey](/images/guiwallet1.png)
+![newECkey](images/guiwallet1.png)
 
 - Create a new Factoid address
 
-![newECkey](/images/guiwallet2.png)
+![newECkey](images/guiwallet2.png)
 
 - Give the address and name.  Refresh the webpage.
 
 - Have someone send Factoids to the new address.  In this example the address is FA34cEZvWHMTQZfLshqwz47USjJRyEB1VqABjQEL9z4RuA8b2NM8
 
-![newECkey](/images/guiwallet3.png)
+![newECkey](images/guiwallet3.png)
 
 - Wait for the Factoids to be sent to your wallet. Factoid transaction are confirmed every 10 minutes on the 10 minute mark.  Refresh the webpage to see if Factoids have been confirmed.
 
 - Once you have Factoids in the GUI wallet, you can turn them into Entry Credits. 
 
-![newECkey](/images/guiwallet4.png)
+![newECkey](images/guiwallet4.png)
 
 1. input the address in your wallet that has Factoids
 2. put in the number of Factoids you want to spend
@@ -132,7 +132,7 @@ First you need to acquire some Factoids.
 6. Sign the transaction to authorize it.
 7. Submit the transaction to the local factomd client, which will submit it to the network.  This is what a successful transaction looks like:
 
-![newECkey](/images/guiwallet5.png)
+![newECkey](images/guiwallet5.png)
 
 - The transaction should confirm after 10 minutes.  At this point, you have Entry Credits.
 
@@ -148,7 +148,7 @@ Chains are identified by a ChainID, which is a hash of the Chain Name. Applicati
 
 - Open writeFactomChainAPI.py in a text editor and change some of the text after `chainName = `
 
-![newECkey](/images/newChainName.png)
+![newECkey](images/newChainName.png)
 
 - Run `python writeFactomChainAPI.py`
 
@@ -169,7 +169,7 @@ wrote entry with hash 75c1de1a2d438b3fc491c67bca8d0f61b015473272ac2fbff9cbc35bb2
 
 We can see after 10 minutes that a new chain has been made:
 
-![newECkey](/images/newChainNameMade.png)
+![newECkey](images/newChainNameMade.png)
 
 http://explorer.factom.org/chain/e5c1f2d9ee0686b3ec28621248c0d049ffd14894cf72da1884bbb2cc7d37ff44
 
@@ -181,7 +181,7 @@ Now that we have our new ChainID, we can place Entries into it.
 
 - Open writeFactomEntryAPI.py in a text editor and put your custom ChainID from above after `chainID =`
 
-![newECkey](/images/newEntry1.png)
+![newECkey](images/newEntry1.png)
 
 - Edit the data in entryContent and externalIDs to suit your application. This is where the important data you are protecting by Factom goes.  External IDs are not needed, and can be blank, but provide some semi-defined structure within an Entry.
 
