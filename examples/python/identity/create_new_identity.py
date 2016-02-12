@@ -8,6 +8,11 @@ key_priv_raw = []
 for l in range(0, 4):
     key_priv_raw.append(os.urandom(32))
 
+#key_priv_raw[0]="f84a80f204c8e5e4369a80336919f55885d0b093505d84b80d12f9c08b81cd5e".decode("hex")
+#key_priv_raw[1]="2bb967a78b081fafef17818c2a4c2ba8dbefcd89664ff18f6ba926b55e00b601".decode("hex")
+#key_priv_raw[2]="09d51ae7cc0dbc597356ab1ada078457277875c81989c5db0ae6f4bf86ccea5f".decode("hex")
+#key_priv_raw[3]="72644033bdd70b8fec7aa1fea50b0c5f7dfadb1bce76aa15d9564bf71c62b160".decode("hex")
+
 key_priv=[]
 for key in key_priv_raw:
     key_priv.append(ed25519.SigningKey(key))
@@ -21,8 +26,6 @@ pre = "01".decode("hex")
 key_pub_hash=[]
 for key in key_pub:
     key_pub_hash.append(hashlib.sha256(hashlib.sha256(pre + key.to_bytes()).digest()).digest())
-
-#print key_pub_hash[0].encode("hex")
 
 id_b58_prefix_priv = ["4db6c9", "4db6e7", "4db705", "4db723"]
 id_b58_prefix_pub = ["3fbeba", "3fbed8", "3fbef6", "3fbf14"]
@@ -63,8 +66,43 @@ while 1:
 
 print "Identity ChainID: " + chainid.encode("hex") + "\n"
 
-print "Element 1: " + "494430"
+print "Identity creation element 1: " + "494430"
 for x in range(0, 4):
-    print "Element " + str(x+2) + ": " + key_pub_hash[x].encode("hex")
-print "Element 6: " + "%016x" % nonce
+    print "Identity creation element " + str(x+2) + ": " + key_pub_hash[x].encode("hex")
+print "Identity creation element 6: " + "%016x" % nonce + "\n"
+
+
+
+
+
+# Registration Message
+
+registration_entry = []
+
+# add version
+registration_entry.append("00".decode("hex"))
+# add disambiguation note
+registration_entry.append("Register Factom Identity")
+# specify which chainID to register
+registration_entry.append(chainid)
+# specify the key level of the identity
+registration_entry.append("01".decode("hex"))
+# reveal the pubkey at this level hashed into the identity
+registration_entry.append("01".decode("hex") + key_pub[0].to_bytes())
+# add the signature to authenticate the message
+
+reg_message_payload = ""
+for x in range(0, 5):
+    reg_message_payload += registration_entry[x]
+    print "Registration element " + str(x+1) + ": " + registration_entry[x].encode("hex")
+#print reg_message_payload.encode("hex")
+sig = key_priv[0].sign(reg_message_payload)
+print "Registration element 6: " + sig.encode("hex")
+
+
+
+
+
+
+
 
