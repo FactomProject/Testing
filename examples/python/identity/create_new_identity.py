@@ -93,8 +93,9 @@ registration_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 
 reg_message_payload = ""
 for x in range(0, 5):
-    reg_message_payload += registration_entry[x]
     print "Registration element " + str(x+1) + ": " + registration_entry[x].encode("hex")
+for x in range(0, 3):
+    reg_message_payload += registration_entry[x]
 #print reg_message_payload.encode("hex")
 sig = key_priv[0].sign(reg_message_payload)
 print "Registration element 6: " + sig.encode("hex")
