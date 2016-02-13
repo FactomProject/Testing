@@ -8,10 +8,10 @@ key_priv_raw = []
 for l in range(0, 4):
     key_priv_raw.append(os.urandom(32))
 
-#key_priv_raw[0]="f84a80f204c8e5e4369a80336919f55885d0b093505d84b80d12f9c08b81cd5e".decode("hex")
-#key_priv_raw[1]="2bb967a78b081fafef17818c2a4c2ba8dbefcd89664ff18f6ba926b55e00b601".decode("hex")
-#key_priv_raw[2]="09d51ae7cc0dbc597356ab1ada078457277875c81989c5db0ae6f4bf86ccea5f".decode("hex")
-#key_priv_raw[3]="72644033bdd70b8fec7aa1fea50b0c5f7dfadb1bce76aa15d9564bf71c62b160".decode("hex")
+key_priv_raw[0]="f84a80f204c8e5e4369a80336919f55885d0b093505d84b80d12f9c08b81cd5e".decode("hex")
+key_priv_raw[1]="2bb967a78b081fafef17818c2a4c2ba8dbefcd89664ff18f6ba926b55e00b601".decode("hex")
+key_priv_raw[2]="09d51ae7cc0dbc597356ab1ada078457277875c81989c5db0ae6f4bf86ccea5f".decode("hex")
+key_priv_raw[3]="72644033bdd70b8fec7aa1fea50b0c5f7dfadb1bce76aa15d9564bf71c62b160".decode("hex")
 
 key_priv=[]
 for key in key_priv_raw:
@@ -45,13 +45,14 @@ for x in range(0, 4):
 
 # Build the First Entry
 elements = []
-elements.append(hashlib.sha256("ID0").digest())
+elements.append(hashlib.sha256("00".decode("hex")).digest())
+elements.append(hashlib.sha256("4964656E7469747920436861696E".decode("hex")).digest())
 for x in range(0, 4):
     elements.append(hashlib.sha256(key_pub_hash[x]).digest())
 
-first5 = ""
+first6 = ""
 for e in elements:
-    first5 += e
+    first6 += e
 
 targetprefix = "888888".decode("hex")
 
@@ -59,17 +60,18 @@ nonce = 0
 while 1:
     nonce += 1
     n=struct.pack('>Q',nonce)
-    sixth = hashlib.sha256(n).digest()
-    chainid = hashlib.sha256(first5 + sixth).digest()
+    seventh = hashlib.sha256(n).digest()
+    chainid = hashlib.sha256(first6 + seventh).digest()
     if chainid.startswith(targetprefix):
         break #found an identity which is valid
 
 print "Identity ChainID: " + chainid.encode("hex") + "\n"
 
-print "Identity creation element 1: " + "494430"
+print "Identity creation element 1: " + "00"
+print "Identity creation element 2: " + "4964656E7469747920436861696E"
 for x in range(0, 4):
-    print "Identity creation element " + str(x+2) + ": " + key_pub_hash[x].encode("hex")
-print "Identity creation element 6: " + "%016x" % nonce + "\n"
+    print "Identity creation element " + str(x+3) + ": " + key_pub_hash[x].encode("hex")
+print "Identity creation element 7: " + "%016x" % nonce + "\n"
 
 
 
@@ -98,12 +100,92 @@ for x in range(0, 3):
     reg_message_payload += registration_entry[x]
 #print reg_message_payload.encode("hex")
 sig = key_priv[0].sign(reg_message_payload)
-print "Registration element 6: " + sig.encode("hex")
+print "Registration element 6: " + sig.encode("hex") + "\n"
+
+
+
+
+# Server Management Subchain
+elements_man = []
+elements_man.append(hashlib.sha256("00".decode("hex")).digest())
+elements_man.append(hashlib.sha256("536572766572204D616E6167656D656E74".decode("hex")).digest())
+elements_man.append(hashlib.sha256(chainid).digest())
+
+first3 = ""
+for e in elements_man:
+    first3 += e
+
+nonce = 0x9876543210000000
+while 1:
+    nonce += 1
+    n=struct.pack('>Q',nonce)
+    fourth = hashlib.sha256(n).digest()
+    chainid_man = hashlib.sha256(first3 + fourth).digest()
+    if chainid_man.startswith(targetprefix):
+        break #found an identity which is valid
+
+print "Server Management ChainID: " + chainid_man.encode("hex") + "\n"
+
+print "Server Management element 1: " + "00"
+print "Server Management element 2: " + "536572766572204D616E6167656D656E74"
+print "Server Management element 3: " + chainid.encode("hex")
+print "Server Management element 4: " + "%016x" % nonce + "\n"
+
+
+
+
+# Server Management Subchain Registration Message
+
+srv_man_registration_entry = []
+
+# add version
+srv_man_registration_entry.append("00".decode("hex"))
+# add disambiguation note
+srv_man_registration_entry.append("Register Server Management")
+# specify which chainID to register
+srv_man_registration_entry.append(chainid_man)
+# specify the key level of the identity
+srv_man_registration_entry.append("01".decode("hex"))
+# reveal the pubkey at this level hashed into the identity
+srv_man_registration_entry.append("01".decode("hex") + key_pub[0].to_bytes())
+# add the signature to authenticate the message
+
+srv_reg_message_payload = ""
+for x in range(0, 5):
+    print "Server Registration element " + str(x+1) + ": " + srv_man_registration_entry[x].encode("hex")
+for x in range(0, 3):
+    srv_reg_message_payload += srv_man_registration_entry[x]
+#print srv_reg_message_payload.encode("hex")
+sig = key_priv[0].sign(srv_reg_message_payload)
+print "Server Registration element 6: " + sig.encode("hex") + "\n"
 
 
 
 
 
+
+
+
+
+
+# Link Entry Credit Key
+
+ec_key_raw="dcbac0efe24636cac2e5b80c4f20022b48d6c14f0da613823355e65d0db8fb19".decode("hex")
+ec_priv = ed25519.SigningKey(ec_key_raw)
+ec_pub = ec_priv.get_verifying_key()
+
+print ec_pub.to_bytes().encode("hex")
+
+link_entry = []
+# add version
+link_entry.append("00".decode("hex"))
+# add disambiguation note
+link_entry.append("Link Entry Credit Key")
+# specify which chainID to link to
+link_entry.append(chainid)
+# specify the EC key added
+link_entry.append(ec_pub.to_bytes())
+# 
 
 
 
