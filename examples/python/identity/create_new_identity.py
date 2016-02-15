@@ -160,6 +160,37 @@ sig = key_priv[0].sign(srv_reg_message_payload)
 print "Server Registration element 6: " + sig.encode("hex") + "\n"
 
 
+# Add New Block Signing Key
+
+block_signing_pubkey = ed25519.SigningKey("e0e92721e80180627244bf182b2c04b71925ab7b991fddc5deecf47db6f94dbc".decode("hex")).get_verifying_key()
+
+
+new_block_key_entry = []
+
+# add version
+new_block_key_entry.append("00".decode("hex"))
+# add disambiguation note
+new_block_key_entry.append("New Block Signing Key")
+# specify which chainID this belongs to
+new_block_key_entry.append(chainid)
+# specify the new block signing pubkey
+new_block_key_entry.append(block_signing_pubkey.to_bytes())
+# add the timestamp
+new_block_key_entry.append("00000000495EAA80".decode("hex"))
+# specify the key level of the identity
+new_block_key_entry.append("01".decode("hex"))
+# reveal the pubkey at this level hashed into the identity
+new_block_key_entry.append("01".decode("hex") + key_pub[0].to_bytes())
+# add the signature to authenticate the message
+
+new_block_key_message_payload = ""
+for x in range(0, 7):
+    print "New Block Signing Key element " + str(x+1) + ": " + new_block_key_entry[x].encode("hex")
+for x in range(0, 5):
+    new_block_key_message_payload += new_block_key_entry[x]
+#print new_block_key_message_payload.encode("hex")
+sig = key_priv[0].sign(new_block_key_message_payload)
+print "New Block Signing Key element 8: " + sig.encode("hex") + "\n"
 
 
 
