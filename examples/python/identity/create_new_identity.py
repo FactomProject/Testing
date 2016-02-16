@@ -198,25 +198,69 @@ print "New Block Signing Key element 8: " + sig.encode("hex") + "\n"
 
 
 
+# Add New Bitcoin Key
 
-# Link Entry Credit Key
+new_bitcoin_key_entry = []
 
-ec_key_raw="dcbac0efe24636cac2e5b80c4f20022b48d6c14f0da613823355e65d0db8fb19".decode("hex")
-ec_priv = ed25519.SigningKey(ec_key_raw)
-ec_pub = ec_priv.get_verifying_key()
-
-print ec_pub.to_bytes().encode("hex")
-
-link_entry = []
 # add version
-link_entry.append("00".decode("hex"))
+new_bitcoin_key_entry.append("00".decode("hex"))
 # add disambiguation note
-link_entry.append("Link Entry Credit Key")
-# specify which chainID to link to
-link_entry.append(chainid)
-# specify the EC key added
-link_entry.append(ec_pub.to_bytes())
-# 
+new_bitcoin_key_entry.append("New Bitcoin Key")
+# specify which chainID this belongs to
+new_bitcoin_key_entry.append(chainid)
+# bitcoin key level
+new_bitcoin_key_entry.append("01".decode("hex"))
+# add bitcoin key type
+new_bitcoin_key_entry.append("00".decode("hex"))
+# add bitcoin pubkey
+new_bitcoin_key_entry.append("C5B7FD920DCE5F61934E792C7E6FCC829AFF533D".decode("hex"))
+# add the timestamp
+new_bitcoin_key_entry.append("00000000495EAA80".decode("hex"))
+# specify the key level of the identity
+new_bitcoin_key_entry.append("01".decode("hex"))
+# reveal the pubkey at this level hashed into the identity
+new_bitcoin_key_entry.append("01".decode("hex") + key_pub[0].to_bytes())
+# add the signature to authenticate the message
+
+new_bitcoin_key_message_payload = ""
+for x in range(0, 9):
+    print "New Bitcoin Key element " + str(x+1) + ": " + new_bitcoin_key_entry[x].encode("hex")
+for x in range(0, 7):
+    new_bitcoin_key_message_payload += new_bitcoin_key_entry[x]
+#print new_bitcoin_key_message_payload.encode("hex")
+sig = key_priv[0].sign(new_bitcoin_key_message_payload)
+print "New Bitcoin Key element 10: " + sig.encode("hex") + "\n"
+
+
+
+
+# Add New M-Hash
+new_mhash_entry = []
+
+# add version
+new_mhash_entry.append("00".decode("hex"))
+# add disambiguation note
+new_mhash_entry.append("New Matryoshka Hash")
+# specify which chainID this belongs to
+new_mhash_entry.append(chainid)
+# specify the new outermost m-hash
+new_mhash_entry.append("bf1e78e5755851242a2ebf703e8bf6aca1af9dbae09ebc495cd2da220e5d370f".decode("hex"))
+# add the timestamp
+new_mhash_entry.append("00000000495EAA80".decode("hex"))
+# specify the key level of the identity
+new_mhash_entry.append("01".decode("hex"))
+# reveal the pubkey at this level hashed into the identity
+new_mhash_entry.append("01".decode("hex") + key_pub[0].to_bytes())
+# add the signature to authenticate the message
+
+new_mhash_message_payload = ""
+for x in range(0, 7):
+    print "New M-Hash element " + str(x+1) + ": " + new_mhash_entry[x].encode("hex")
+for x in range(0, 5):
+    new_mhash_message_payload += new_mhash_entry[x]
+#print new_mhash_message_payload.encode("hex")
+sig = key_priv[0].sign(new_mhash_message_payload)
+print "New M-Hash element 8: " + sig.encode("hex") + "\n"
 
 
 
