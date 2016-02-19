@@ -87,20 +87,18 @@ registration_entry.append("00".decode("hex"))
 registration_entry.append("Register Factom Identity")
 # specify which chainID to register
 registration_entry.append(chainid)
-# specify the key level of the identity
-registration_entry.append("01".decode("hex"))
 # reveal the pubkey at this level hashed into the identity
 registration_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 # add the signature to authenticate the message
 
 reg_message_payload = ""
-for x in range(0, 5):
+for x in range(0, 4):
     print "Registration element " + str(x+1) + ": " + registration_entry[x].encode("hex")
 for x in range(0, 3):
     reg_message_payload += registration_entry[x]
 #print reg_message_payload.encode("hex")
 sig = key_priv[0].sign(reg_message_payload)
-print "Registration element 6: " + sig.encode("hex") + "\n"
+print "Registration element 5: " + sig.encode("hex") + "\n"
 
 
 
@@ -144,20 +142,18 @@ srv_man_registration_entry.append("00".decode("hex"))
 srv_man_registration_entry.append("Register Server Management")
 # specify which chainID to register
 srv_man_registration_entry.append(chainid_man)
-# specify the key level of the identity
-srv_man_registration_entry.append("01".decode("hex"))
 # reveal the pubkey at this level hashed into the identity
 srv_man_registration_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 # add the signature to authenticate the message
 
 srv_reg_message_payload = ""
-for x in range(0, 5):
+for x in range(0, 4):
     print "Server Registration element " + str(x+1) + ": " + srv_man_registration_entry[x].encode("hex")
 for x in range(0, 3):
     srv_reg_message_payload += srv_man_registration_entry[x]
 #print srv_reg_message_payload.encode("hex")
 sig = key_priv[0].sign(srv_reg_message_payload)
-print "Server Registration element 6: " + sig.encode("hex") + "\n"
+print "Server Registration element 5: " + sig.encode("hex") + "\n"
 
 
 # Add New Block Signing Key
@@ -177,20 +173,18 @@ new_block_key_entry.append(chainid)
 new_block_key_entry.append(block_signing_pubkey.to_bytes())
 # add the timestamp
 new_block_key_entry.append("00000000495EAA80".decode("hex"))
-# specify the key level of the identity
-new_block_key_entry.append("01".decode("hex"))
 # reveal the pubkey at this level hashed into the identity
 new_block_key_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 # add the signature to authenticate the message
 
 new_block_key_message_payload = ""
-for x in range(0, 7):
+for x in range(0, 6):
     print "New Block Signing Key element " + str(x+1) + ": " + new_block_key_entry[x].encode("hex")
 for x in range(0, 5):
     new_block_key_message_payload += new_block_key_entry[x]
 #print new_block_key_message_payload.encode("hex")
 sig = key_priv[0].sign(new_block_key_message_payload)
-print "New Block Signing Key element 8: " + sig.encode("hex") + "\n"
+print "New Block Signing Key element 7: " + sig.encode("hex") + "\n"
 
 
 
@@ -209,27 +203,25 @@ new_bitcoin_key_entry.append("New Bitcoin Key")
 # specify which chainID this belongs to
 new_bitcoin_key_entry.append(chainid)
 # bitcoin key level
-new_bitcoin_key_entry.append("01".decode("hex"))
+new_bitcoin_key_entry.append("00".decode("hex"))
 # add bitcoin key type
 new_bitcoin_key_entry.append("00".decode("hex"))
 # add bitcoin pubkey
 new_bitcoin_key_entry.append("C5B7FD920DCE5F61934E792C7E6FCC829AFF533D".decode("hex"))
 # add the timestamp
 new_bitcoin_key_entry.append("00000000495EAA80".decode("hex"))
-# specify the key level of the identity
-new_bitcoin_key_entry.append("01".decode("hex"))
 # reveal the pubkey at this level hashed into the identity
 new_bitcoin_key_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 # add the signature to authenticate the message
 
 new_bitcoin_key_message_payload = ""
-for x in range(0, 9):
+for x in range(0, 8):
     print "New Bitcoin Key element " + str(x+1) + ": " + new_bitcoin_key_entry[x].encode("hex")
 for x in range(0, 7):
     new_bitcoin_key_message_payload += new_bitcoin_key_entry[x]
 #print new_bitcoin_key_message_payload.encode("hex")
 sig = key_priv[0].sign(new_bitcoin_key_message_payload)
-print "New Bitcoin Key element 10: " + sig.encode("hex") + "\n"
+print "New Bitcoin Key element 9: " + sig.encode("hex") + "\n"
 
 
 
@@ -247,20 +239,18 @@ new_mhash_entry.append(chainid)
 new_mhash_entry.append("bf1e78e5755851242a2ebf703e8bf6aca1af9dbae09ebc495cd2da220e5d370f".decode("hex"))
 # add the timestamp
 new_mhash_entry.append("00000000495EAA80".decode("hex"))
-# specify the key level of the identity
-new_mhash_entry.append("01".decode("hex"))
 # reveal the pubkey at this level hashed into the identity
 new_mhash_entry.append("01".decode("hex") + key_pub[0].to_bytes())
 # add the signature to authenticate the message
 
 new_mhash_message_payload = ""
-for x in range(0, 7):
+for x in range(0, 6):
     print "New M-Hash element " + str(x+1) + ": " + new_mhash_entry[x].encode("hex")
 for x in range(0, 5):
     new_mhash_message_payload += new_mhash_entry[x]
 #print new_mhash_message_payload.encode("hex")
 sig = key_priv[0].sign(new_mhash_message_payload)
-print "New M-Hash element 8: " + sig.encode("hex") + "\n"
+print "New M-Hash element 7: " + sig.encode("hex") + "\n"
 
 
 
