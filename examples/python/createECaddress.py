@@ -33,9 +33,9 @@ print "human readable Private Key: " + b58encoding
 
 
 
-# convert the private key to human readable form
+# convert the public key to human readable form
 
-
+# this is a magic number to make the first two letters be EC
 publicPrefix = "592a"
 
 interimAddress = publicPrefix + Ed25519PublicKey.to_bytes().encode("hex")
