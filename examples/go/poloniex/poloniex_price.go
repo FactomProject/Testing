@@ -30,6 +30,10 @@ type PassJSON struct {
     PoloniexData string
 }
 
+type ErrorChecker struct {
+    Error string
+}
+
 func main() {
     //set up handler for generating graph
  	http.HandleFunc("/", renderGraph)
@@ -110,6 +114,20 @@ func poloniexIsValid(e *factom.Entry) bool {
 		return false
 	} else if b.Timestamp == 0 {
 		return false
+	}
+
+    var errCheck ErrorChecker
+
+	if err := json.Unmarshal(b.FCT_BTC, &errCheck); err == nil {
+        if len(errCheck.Error) > 0 {
+            return false
+        }
+	}
+
+	if err := json.Unmarshal(b.BTC_USD, &errCheck); err == nil {
+        if len(errCheck.Error) > 0 {
+            return false
+        }
 	}
 	
 	return true
