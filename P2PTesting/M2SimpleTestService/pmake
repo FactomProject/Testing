@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "go build p2p.go"
+go build p2p.go
+if [ $? -eq 0 ]; then
+    echo "                            `date`"
+    echo "was binary updated?"
+    ls -G -lh p2p
+    ./p2p
+fi
