@@ -1,0 +1,65 @@
+# 10.5.0.4 (virtual network IP)
+Host m2p2pa
+   HostName 13.84.217.234 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+# 10.5.0.5 (virtual network IP)
+Host m2p2pb
+   HostName 13.84.217.16 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+
+# 10.5.0.6 (virtual network IP)
+Host m2p2pc
+   HostName 13.84.218.185 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+
+# 10.5.0.7 (virtual network IP)
+Host m2p2pd
+   HostName 13.84.225.20 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+# 10.5.0.8 (virtual network IP)
+Host m2p2pe
+   HostName 13.84.224.219 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+# 10.5.0.9 (virtual network IP)
+Host m2p2pf
+   HostName 13.84.220.7 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+# 10.5.0.10 (virtual network IP)
+Host m2p2pg
+   HostName 13.84.221.163 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120
+
+# 10.5.0.11 (virtual network IP)
+Host m2p2ph
+   HostName 13.84.220.47 
+   User factom
+   Protocol 2
+   ServerAliveInterval 30
+   ServerAliveCountMax 120

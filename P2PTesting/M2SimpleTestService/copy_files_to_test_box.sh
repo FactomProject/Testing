@@ -7,5 +7,7 @@ echo "Copying scripts"
 scp leader.sh $1:~/
 scp follower.sh $1:~/
 scp stop.sh $1:~/
+echo "Removing previous log file."
+ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 scp new_run_header.sh $1:~/
 scp r $1:~/
