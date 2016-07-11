@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Stopping factomd on $1 before updating."
 ssh -n $1 './stop.sh'
+ssh -n $1 "rm ~/message_log.csv"
 echo "Copying the local factomd to remote machine $1"
 scp /tmp/factomd-p2p-test-build/factomd $1:~/factomd
 echo "Copying scripts"
