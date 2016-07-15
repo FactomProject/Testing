@@ -1,4 +1,4 @@
 #!/bin/bash +x
 
 ./new_run_header.sh
-nohup ./factomd -db=Map -count=2 -p2pPort="8108" -peers="10.5.0.4:8108 10.5.0.5:8108 10.5.0.6:8108 10.5.0.7:8108 10.5.0.8:8108 10.5.0.9:8108 10.5.0.10:8108 10.5.0.11:8108" -netdebug=5 >>runlog.txt 2>&1 &
+nohup ./factomd -db=Map -count=2 -NETWORK="TEST" -peers="10.5.0.4:8109 10.5.0.5:8109 10.5.0.6:8109 10.5.0.7:8109 10.5.0.8:8109 10.5.0.9:8109 10.5.0.10:8109 10.5.0.11:8109" -netdebug=1 >>runlog.txt 2>&1 &
