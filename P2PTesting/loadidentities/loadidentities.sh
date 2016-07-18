@@ -106,7 +106,8 @@ identities=(8888881570f89283f3a516b6e5ed240f43f5ad7cb05132378c4a006abe7c2b93
 
 # addtoblockchain localhost:8080 16
 echo "Adding identites to blockchain"
-addtoblockchain $HOST $MAX 10000 false
+TOTAL=$((MAX * 2))
+addtoblockchain $HOST $TOTAL 10000 false
 
 echo "Waiting for next block"
 sleep ${BLKTIME}s
@@ -114,6 +115,12 @@ sleep ${BLKTIME}s
 COUNTER=0
 while [  $COUNTER -lt $MAX  ]; do
 	addservermessage -host=$HOST send f ${identities[$COUNTER]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
+	let COUNTER=COUNTER+1 
+	sleep 1s
+done
+
+while [  $COUNTER -lt $TOTAL  ]; do
+	addservermessage -host=$HOST send a ${identities[$COUNTER]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
 	let COUNTER=COUNTER+1 
 	sleep 1s
 done

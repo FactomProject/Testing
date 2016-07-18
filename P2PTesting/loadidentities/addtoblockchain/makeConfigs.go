@@ -54,7 +54,8 @@ IdentityChainID                       = ` + auth.ChainID.String() + `
 LocalServerPrivKey                    = ` + sec + `
 LocalServerPublicKey                  = ` + pub + `
 ExchangeRate                          = 00100000
-ExchangeRateChainId                   = eac57815972c504ec5ae3f9e5c1fe12321a3c8c78def62528fb74cf7af5e7389
+ExchangeRateChainId		              = eac57815972c504ec5ae3f9e5c1fe12321a3c8c78def62528fb74cf7af5e7389
+ExchangeRateAuthorityAddress          = EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r
 
 [anchor]
 ServerECPrivKey                       = 397c49e182caa97737c6b394591c614156fbe7998d7bf5d76273961e9fa1edd4

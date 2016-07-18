@@ -32,7 +32,7 @@ func main() {
 			log.Fatal(err)
 		}
 		fallthrough
-	case len(args) > 3:
+	case len(args) > 3: // Factoshis
 		FactoshisPerEC, err = strconv.ParseUint(args[3], 10, 64)
 		if err != nil {
 			log.Fatal(err)
