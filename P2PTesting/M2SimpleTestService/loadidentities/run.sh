@@ -2,4 +2,4 @@
 
 # 9 Leaders
 #                 #Feds    Host     BlkTime(s)
-sh loadidentities.sh 1 localhost:8088 10
+sh loadidentities.sh 40 13.84.217.234:8088 700
