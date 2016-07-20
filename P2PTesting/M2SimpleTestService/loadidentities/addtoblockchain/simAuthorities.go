@@ -120,7 +120,9 @@ func setUpAuthorites() []hardCodedAuthority {
 	authStack = make([]hardCodedAuthority, 0)
 	authKeyLibrary = make([]hardCodedAuthority, 0)
 	list := buildMessages()
-	buildMainChain()
+	if !onlyConfigs {
+		buildMainChain()
+	}
 	return list
 }
 
@@ -178,14 +180,15 @@ func authorityToBlockchain(total int) ([]hardCodedAuthority, int, error) {
 			paramsRev.Entry = rev
 			jCommit := primitives.NewJSON2Request("commit-chain", i, paramsCom)
 			jRev := primitives.NewJSON2Request("reveal-chain", i, paramsRev)
-
-			_, err = v2Request(jCommit)
-			if err != nil {
-				log.Println("Error in making identities: " + err.Error())
-			}
-			_, err = v2Request(jRev)
-			if err != nil {
-				log.Println("Error in making identities: " + err.Error())
+			if !onlyConfigs {
+				_, err = v2Request(jCommit)
+				if err != nil {
+					log.Println("Error in making identities: " + err.Error())
+				}
+				_, err = v2Request(jRev)
+				if err != nil {
+					log.Println("Error in making identities: " + err.Error())
+				}
 			}
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -204,50 +207,54 @@ func authorityToBlockchain(total int) ([]hardCodedAuthority, int, error) {
 			jCommit := primitives.NewJSON2Request("commit-entry", i, paramsCom)
 			jRev := primitives.NewJSON2Request("reveal-entry", i, paramsRev)
 
-			_, err = v2Request(jCommit)
-			if err != nil {
-				log.Println("Error in making identities: " + err.Error())
-			}
-			_, err = v2Request(jRev)
-			if err != nil {
-				log.Println("Error in making identities: " + err.Error())
+			if !onlyConfigs {
+				_, err = v2Request(jCommit)
+				if err != nil {
+					log.Println("Error in making identities: " + err.Error())
+				}
+				_, err = v2Request(jRev)
+				if err != nil {
+					log.Println("Error in making identities: " + err.Error())
+				}
 			}
 
 		}
 
 		com, rev, key, _ := makeBlockKey(ele, ec, false)
 		ele.NewBlockKey = key
-		m := new(wsapi.EntryRequest)
-		m.Entry = com
-		j := primitives.NewJSON2Request("commit-entry", 0, m)
-		_, _ = v2Request(j)
+		if !onlyConfigs {
+			m := new(wsapi.EntryRequest)
+			m.Entry = com
+			j := primitives.NewJSON2Request("commit-entry", 0, m)
+			_, _ = v2Request(j)
 
-		m = new(wsapi.EntryRequest)
-		m.Entry = rev
-		j = primitives.NewJSON2Request("reveal-entry", 0, m)
-		_, _ = v2Request(j)
+			m = new(wsapi.EntryRequest)
+			m.Entry = rev
+			j = primitives.NewJSON2Request("reveal-entry", 0, m)
+			_, _ = v2Request(j)
 
-		com, rev, _ = makeMHash(ele, ec)
-		m = new(wsapi.EntryRequest)
-		m.Entry = com
-		j = primitives.NewJSON2Request("commit-entry", 0, m)
-		_, _ = v2Request(j)
+			com, rev, _ = makeMHash(ele, ec)
+			m = new(wsapi.EntryRequest)
+			m.Entry = com
+			j = primitives.NewJSON2Request("commit-entry", 0, m)
+			_, _ = v2Request(j)
 
-		m = new(wsapi.EntryRequest)
-		m.Entry = rev
-		j = primitives.NewJSON2Request("reveal-entry", 0, m)
-		_, _ = v2Request(j)
+			m = new(wsapi.EntryRequest)
+			m.Entry = rev
+			j = primitives.NewJSON2Request("reveal-entry", 0, m)
+			_, _ = v2Request(j)
 
-		com, rev, _ = makeBTCKey(ele, ec)
-		m = new(wsapi.EntryRequest)
-		m.Entry = com
-		j = primitives.NewJSON2Request("commit-entry", 0, m)
-		_, _ = v2Request(j)
+			com, rev, _ = makeBTCKey(ele, ec)
+			m = new(wsapi.EntryRequest)
+			m.Entry = com
+			j = primitives.NewJSON2Request("commit-entry", 0, m)
+			_, _ = v2Request(j)
 
-		m = new(wsapi.EntryRequest)
-		m.Entry = rev
-		j = primitives.NewJSON2Request("reveal-entry", 0, m)
-		_, _ = v2Request(j)
+			m = new(wsapi.EntryRequest)
+			m.Entry = rev
+			j = primitives.NewJSON2Request("reveal-entry", 0, m)
+			_, _ = v2Request(j)
+		}
 
 		if makeConfigs {
 			MakeConfigFile(ele, count)

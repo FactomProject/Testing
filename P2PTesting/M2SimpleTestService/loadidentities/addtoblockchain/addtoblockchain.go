@@ -14,6 +14,7 @@ var (
 	FactoshisPerEC uint64 = 10000
 	printMessages  bool   = true
 	makeConfigs    bool   = false
+	onlyConfigs    bool   = false
 )
 
 var _ = fmt.Sprintf("format")
@@ -25,6 +26,13 @@ func main() {
 	switch {
 	case len(args) > 1: // Host Address
 		Host = args[1]
+		if Host == "true" {
+			makeConfigs = true
+			onlyConfigs = true
+			setUpAuthorites()
+			authorityToBlockchain(100)
+			return
+		}
 		fallthrough
 	case len(args) > 2: // Amount of Identites
 		Amount, err = strconv.Atoi(args[2])
