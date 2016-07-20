@@ -25,7 +25,7 @@ func getString(auth hardCodedAuthority) string {
 ; ------------------------------------------------------------------------------
 [app]
 PortNumber                            = 8088
-HomeDir                               = ""
+HomeDir                               = "/home/factom/"
 ; --------------- DBType: LDB | Bolt | Map
 DBType                                = "LDB"
 LdbPath                               = "database/ldb"
