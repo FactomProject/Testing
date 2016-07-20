@@ -25,6 +25,7 @@ function update {
   scp $2 $1:~/start.sh
   scp new_run_header.sh $1:~/
   scp r $1:~/
+  scp -r ../../../factomd/controlPanel/Web $1:~/.factom/m2/
   echo "Removing previous log file."
   ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 }
@@ -78,6 +79,8 @@ if [ $? -eq 0 ]; then
     scp federatedconfigs/6.conf m2p2ph:$confPath
     start m2p2ph
 
+    echo "Sleep 30s before loading identities"
+    sleep 30
     echo "Load the identities"
     cd loadidentities
     ./run.sh
