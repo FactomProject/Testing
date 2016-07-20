@@ -1,0 +1,1 @@
+addtoblockchain localhost:8080 100 10000 true
