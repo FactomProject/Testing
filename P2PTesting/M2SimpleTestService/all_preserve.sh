@@ -27,6 +27,8 @@ mkdir $path$directory
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 echo "Preserving: $line"
+ssh -n $line "touch runlog.txt"
+ssh -n $line "touch message_log.csv"
 ssh -n $line "tar czf $line-runlog.tz runlog.txt"
 ssh -n $line "tar czf $line-messagelog.tz message_log.csv"
 scp $line:~/$line-runlog.tz $path$directory
@@ -40,6 +42,8 @@ done < "./leaders.conf"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 echo "Preserving: $line"
+ssh -n $line "touch runlog.txt"
+ssh -n $line "touch message_log.csv"
 ssh -n $line "tar czf $line-runlog.tz runlog.txt"
 ssh -n $line "tar czf $line-messagelog.tz message_log.csv"
 scp $line:~/$line-runlog.tz $path$directory

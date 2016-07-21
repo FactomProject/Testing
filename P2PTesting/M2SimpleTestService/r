@@ -1,2 +1,2 @@
 #!/bin/bash +x
-tail -f runlog.txt
+tail -f runlog.txt | grep -i $1

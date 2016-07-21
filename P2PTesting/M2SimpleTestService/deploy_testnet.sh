@@ -18,7 +18,7 @@ echo "Building the current Factomd as a linux binary"
 # update MachineAlias StartFile
 function update {
   ssh -n $1 './stop.sh'
-  echo "Copying the local factomd to remote machine $1"
+  echo "#####"; echo; echo " $1"; echo; echo "#####"
     scp /tmp/factomd-p2p-test-build/factomd $1:~/factomd
   echo "Copying scripts"
   scp stop.sh $1:~/
@@ -79,9 +79,9 @@ if [ $? -eq 0 ]; then
     scp federatedconfigs/6.conf m2p2ph:$confPath
     start m2p2ph
 
-    echo "Sleep 30s before loading identities"
-    sleep 30
-    echo "Load the identities"
-    cd loadidentities
-    ./run.sh
+    # echo "Sleep 30s before loading identities"
+    # sleep 30
+    # echo "Load the identities"
+    # cd loadidentities
+    # ./run.sh
 fi
