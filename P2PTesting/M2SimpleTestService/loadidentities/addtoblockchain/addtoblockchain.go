@@ -57,12 +57,12 @@ func main() {
 		log.Println(err)
 	}
 	setUpAuthorites()
-	auths, _, err := authorityToBlockchain(Amount)
+	auths, skipped, err := authorityToBlockchain(Amount)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if printMessages {
-		os.Stderr.WriteString(fmt.Sprintf("=== %d Identities added to blockchain ===", len(auths)))
+		os.Stderr.WriteString(fmt.Sprintf("=== %d Identities added to blockchain, %d Already there ===\n", len(auths), skipped))
 		for _, ele := range auths {
 			fmt.Println(ele.ChainID.String())
 		}
