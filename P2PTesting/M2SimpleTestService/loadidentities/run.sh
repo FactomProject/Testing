@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-HOST=localhost:8088
+HOST=13.84.217.234:8088
 
 
 ### Make identities elibible to be promoted
