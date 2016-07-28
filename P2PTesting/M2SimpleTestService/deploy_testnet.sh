@@ -17,9 +17,11 @@ echo "Building the current Factomd as a linux binary"
 
 # update MachineAlias StartFile
 function update {
-  ssh -n $1 './stop.sh'
   echo "#####"; echo; echo " $1"; echo; echo "#####"
-    scp /tmp/factomd-p2p-test-build/factomd $1:~/factomd
+  ssh -n $1 './stop.sh'
+  ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
+  ssh -n $1 'rm message_log.csv; touch message_log.csv'
+  scp /tmp/factomd-p2p-test-build/factomd $1:~/factomd
   echo "Copying scripts"
   scp stop.sh $1:~/
   scp $2 $1:~/start.sh
@@ -79,9 +81,11 @@ if [ $? -eq 0 ]; then
     scp federatedconfigs/6.conf m2p2ph:$confPath
     start m2p2ph
 
-    # echo "Sleep 30s before loading identities"
-    # sleep 30
-    # echo "Load the identities"
-    # cd loadidentities
-    # ./run.sh
+    echo "Sleep 30s before loading identities"
+    sleep 250
+    echo "Load the identities"
+    cd loadidentities
+    ./run.sh
+    echo "$$$$ Network Should be U $$$$"
+
 fi

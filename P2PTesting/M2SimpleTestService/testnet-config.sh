@@ -10,3 +10,4 @@ echo "Removing previous log files."
 ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 echo "Making the .factom directory, and m2 directory and copying factomd.conf"
 ssh -n $1 'rm -rf .factom; mkdir .factom; cd .factom; mkdir m2'
+
