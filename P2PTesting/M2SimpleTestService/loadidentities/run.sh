@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
+HOST=13.84.217.234:8088
 
-# 9 Leaders
-#                 #Feds    Host     BlkTime(s)
-sh loadidentities.sh 4 13.84.217.234:8088 70
+
+### Make identities elibible to be promoted
+#                #Idents   Host     
+sh loadidentities.sh 8 $HOST
+
+# BlkTime(s)
+echo "Waiting for next block... "
+sleep 2s
+
+# Promote IDs 0 - 3 to Federated
+sh makeXfeds.sh 0 3 $HOST
+
+# Promote IDs 4-7 to Audit
+sh makeXauds.sh 4 7 $HOST

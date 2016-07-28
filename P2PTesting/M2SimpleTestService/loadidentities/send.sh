@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
-TOTAL=$1
-HOST=$2
+###################################################
+## Use this to control server promotion/demotion ##
+###################################################
+#
+HOST=$4
+# Selects this identity index
+IDTOPROMOTE=$1
+
+# 'f' -> FEDERATED SERVER
+# 'a' -> AUDIT Server
+TYPE=$2
+# 'a' -> Add    /  Promte
+# 'r' -> Remove /  Demote
+ACTION=$3
 
 identities=(8888881570f89283f3a516b6e5ed240f43f5ad7cb05132378c4a006abe7c2b93
 888888aeaac80d825ac9675cf3a6591916883bd9947e16ab752d39164d80a608
@@ -103,6 +115,26 @@ identities=(8888881570f89283f3a516b6e5ed240f43f5ad7cb05132378c4a006abe7c2b93
 88888849f5798c24be7bdeb247484a5ed51cfafc8175f93cf058d5493139d063
 88888893ba7d140e45dccca944061376ad547bef4facea68c2576630841667f9)
 
-# addtoblockchain localhost:8080 16
-echo "Adding identites to blockchain"
-addtoblockchain $HOST $TOTAL 10000 false
+if [ "$ACTION" == "a" ]
+	then
+	if [ "$TYPE" == "f" ]
+	  then
+	    echo "Promoting ${identities[$IDTOPROMOTE]} to FEDERATED"
+		addservermessage -host=$HOST send f ${identities[$IDTOPROMOTE]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
+	elif [ "$TYPE" == "a" ]
+		then
+	    echo "Promoting ${identities[$IDTOPROMOTE]} to AUDIT"
+		addservermessage -host=$HOST send a ${identities[$IDTOPROMOTE]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
+	fi
+elif [ "$ACTION" == "r" ]
+	then
+	if [ "$TYPE" == "f" ]
+	  then
+	    echo "Removing ${identities[$IDTOPROMOTE]} as FEDERATED"
+		addservermessage -host=$HOST sendR f ${identities[$IDTOPROMOTE]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
+	elif [ "$TYPE" == "a" ]
+		then
+	    echo "Removing ${identities[$IDTOPROMOTE]} as AUDIT"
+		addservermessage -host=$HOST sendR a ${identities[$IDTOPROMOTE]} 4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d
+	fi
+fi
