@@ -85,7 +85,22 @@ if [ $? -eq 0 ]; then
     sleep 250
     echo "Load the identities"
     cd loadidentities
-    ./run.sh
+
+    HOST=13.84.217.234:8088
+
+    ### Make identities eligible to be promoted
+    #                #Idents   Host     
+    sh loadidentities.sh 8 $HOST
+
+    # BlkTime(s)
+    echo "Waiting for next block... "
+    sleep 100s
+
+    # Promote IDs 0 - 3 to Federated
+    sh makeXfeds.sh 0 3 $HOST
+
+    # Promote IDs 4-7 to Audit
+    sh makeXauds.sh 4 7 $HOST
     echo "$$$$ Network Should be U $$$$"
 
 fi
