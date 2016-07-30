@@ -3,7 +3,7 @@ echo
 echo "Stopping factomd on $1 before updating."
 ssh -n $1 './stop.sh'
 echo "Copies the local authorized_keys to ~/.ssh/authorized_keys"
-scp ../../../FactomInc/ops/authorized_keys $1:~/.ssh/authorized_keys
+scp $GOPATH/src/github.com/FactomProject/FactomInc/ops/authorized_keys $1:~/.ssh/authorized_keys
 echo "Removing previous scripts and the like"
 ssh -n $1 'rm factomd; rm *.sh; rm r; rm runlog.txt'
 echo "Removing previous log files."
