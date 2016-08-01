@@ -3,7 +3,8 @@
 echo "Starting the network."
 
 function start {
-  ssh -n $1 './start.sh'
+   echo "Starting $1"
+ ssh -n $1 './start.sh'
 }
 
 

@@ -17,7 +17,19 @@ echo "Building the current Factomd as a linux binary"
 
 # update MachineAlias StartFile
 function update {
-  ../update-test-box.sh $1 $2
+  echo "#####"; echo; echo " $1"; echo; echo "#####"
+  ssh -n $1 './stop.sh'
+  ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
+  ssh -n $1 'rm message_log.csv; touch message_log.csv'
+  scp /tmp/factomd-p2p-test-build/factomd $1:~/factomd
+  echo "Copying scripts"
+  scp ../stop.sh $1:~/
+  scp $2 $1:~/start.sh
+  scp ../new_run_header.sh $1:~/
+  scp ../r $1:~/
+  scp -r ../../../../factomd/controlPanel/Web $1:~/.factom/m2/
+  echo "Removing previous log file."
+  ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 }
 
 # start MachineAlias
@@ -26,13 +38,16 @@ function start {
   ssh -n -T $1 '../start.sh'
 }
 
+CWD=`pwd`
+
 confPath="~/.factom/m2/factomd.conf"
-leaderStart="start-testnet-leader.sh"
-followerStart="start-testnet-follower.sh"
+leaderStart="../start-testnet-leader.sh"
+followerStart="../start-testnet-follower.sh"
+
+cd "$GOPATH/src/github.com/FactomProject/factomd"
 
 TMPDIR="/tmp/factomd-p2p-test-build"
 mkdir $TMPDIR
-cd "$GOPATH/src/github.com/FactomProject/factomd"
 echo "Building linux factomd and putting it in $TMPDIR"
 CGO_ENABLED=0 GOOS=linux go build -installsuffix cgo -o "$TMPDIR/factomd"
 if [ $? -eq 0 ]; then
@@ -40,23 +55,22 @@ if [ $? -eq 0 ]; then
     ls -G -lh "/tmp/factomd-p2p-test-build/factomd"
     echo "Updating all the servers...."
 
+cd $CWD
+
     echo "Setup the leaders..."
     update tda $leaderStart
     scp configs/leader.conf tda:$confPath
-    start tda
 
     update tdb $followerStart
     scp configs/0.conf tdb:$confPath
-    start tdb
 
     update tdc $followerStart
     scp configs/1.conf tdc:$confPath
-    start tdc
 
     update tdd $followerStart
     scp configs/2.conf tdd:$confPath
-    start tdd
 
+    ./start.sh
 
     echo "*****************************"
     echo "*****************************"
@@ -79,9 +93,9 @@ if [ $? -eq 0 ]; then
     sleep 100s
 
     # Promote IDs 0 - 3 to Federated
-    sh makeXfeds.sh 0 3 $HOST
+    sh makeXfeds.sh 0 1 $HOST
 
     # Promote IDs 4-7 to Audit
-    sh makeXauds.sh 4 7 $HOST
+    sh makeXauds.sh 2 3 $HOST
     echo "#### Network Should be UP #####"
 fi

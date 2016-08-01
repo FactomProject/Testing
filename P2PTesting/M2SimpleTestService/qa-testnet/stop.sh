@@ -2,7 +2,8 @@
 
 echo "Stopping the network."
 
-function update {
+function stop {
+  echo "Stopping $1"
   ssh -n $1 './stop.sh'
 }
 

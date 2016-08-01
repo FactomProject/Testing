@@ -1,5 +1,7 @@
+
+
 # 10.5.0.4 (virtual network IP)
-Host m2p2pa
+Host m2p2pa dev
    HostName 13.84.217.234 
    User factom
    Protocol 2
@@ -63,3 +65,93 @@ Host m2p2ph
    Protocol 2
    ServerAliveInterval 30
    ServerAliveCountMax 120
+
+
+# 10.4.0.4 (virtual network IP)
+Host quadm2a
+   HostName 40.84.29.122 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.5 (virtual network IP)
+Host quadm2b
+   HostName 40.84.29.210 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.6 (virtual network IP)
+Host quadm2c
+   HostName 40.84.28.100 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.7 (virtual network IP)
+Host quadm2d
+   HostName 40.84.59.159 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.8 (virtual network IP)
+Host quadm2e
+   HostName 40.79.73.96 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.9 (virtual network IP)
+Host quadm2f
+   HostName 104.210.2.214 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.10 (virtual network IP)
+Host quadm2g
+   HostName 104.210.1.112 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.11 (virtual network IP)
+Host quadm2h
+   HostName 104.210.5.113 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.12 (virtual network IP)
+Host quadm2i
+   HostName 104.210.1.100 
+   User factom
+   Protocol 2
+ 
+# 10.4.0.13 (virtual network IP)
+Host quadm2j
+   HostName 13.68.20.240 
+   User factom
+   Protocol 2
+ 
+
+
+# 10.12.0.4 (virtual network IP)
+Host tda qa
+   HostName 52.161.31.205 
+   User factom
+   Protocol 2
+
+# 10.12.0.5 (virtual network IP)
+Host tdb
+   HostName 52.161.30.82
+   User factom
+   Protocol 2
+
+# 10.12.0.6(virtual network IP)
+Host tdc
+   HostName 52.161.31.247 
+   User factom
+   Protocol 2
+
+# 10.12.0.7 (virtual network IP)
+Host tdd
+   HostName 52.161.25.252
+   User factom
+   Protocol 2
+
+
+

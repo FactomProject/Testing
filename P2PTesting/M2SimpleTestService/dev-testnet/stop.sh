@@ -2,13 +2,17 @@
 
 echo "Stopping the network."
 
-while IFS='' read -r line || [[ -n "$line" ]]; do
-  echo "Stopping Leader: $line"
-  ssh -n $line './stop.sh'
-done < "./leaders.conf"
+function stop {
+  echo "Stopping $1"
+  ssh -n $1 './stop.sh'
+}
 
 
-while IFS='' read -r line || [[ -n "$line" ]]; do
-  echo "Stopping Follower: $line"
-  ssh -n $line './stop.sh'
-done < "./followers.conf"
+stop m2p2pa
+stop m2p2pb
+stop m2p2pc
+stop m2p2pd
+stop m2p2pe
+stop m2p2pf
+stop m2p2pg
+stop m2p2ph

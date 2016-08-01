@@ -1,7 +1,5 @@
 #!/bin/bash +x
 
-echo
-echo "Building the current Factomd as a linux binary"
 
 # 1. Build Factomd 
 # 2. For each machine:
@@ -23,7 +21,10 @@ function update {
   scp $2 $1:~/start.sh
   scp new_run_header.sh $1:~/
   scp r $1:~/
+  pwd
   scp -r ../../../factomd/controlPanel/Web $1:~/.factom/m2/
   echo "Removing previous log file."
   ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 }
+
+update $1 $2
