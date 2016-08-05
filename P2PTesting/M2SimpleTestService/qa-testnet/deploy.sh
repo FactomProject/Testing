@@ -35,7 +35,7 @@ function update {
 # start MachineAlias
 function start {
   echo "Starting the server"
-  ssh -n -T $1 '../start.sh'
+  ssh -n -T $1 './start.sh'
 }
 
 CWD=`pwd`
@@ -49,13 +49,13 @@ cd "$GOPATH/src/github.com/FactomProject/factomd"
 TMPDIR="/tmp/factomd-p2p-test-build"
 mkdir $TMPDIR
 echo "Building linux factomd and putting it in $TMPDIR"
-CGO_ENABLED=0 GOOS=linux go build -installsuffix cgo -o "$TMPDIR/factomd"
+CGO_ENABLED=0 GOOS=linux go build -ldflags "-X github.com/FactomProject/factomd/engine.Build=`git rev-parse HEAD`" -installsuffix cgo -o "$TMPDIR/factomd"
 if [ $? -eq 0 ]; then
     echo "was binary updated? Current:`date`"
     ls -G -lh "/tmp/factomd-p2p-test-build/factomd"
     echo "Updating all the servers...."
 
-cd $CWD
+    cd $CWD
 
     echo "Setup the leaders..."
     update tda $leaderStart
@@ -78,9 +78,9 @@ cd $CWD
     echo "*****************************"
 
     echo "Sleep before loading identities"
-    sleep 250
+    sleep 150
     echo "Load the identities"
-    cd loadidentities
+    cd ../loadidentities
 
     HOST=52.161.31.205:8088
 
