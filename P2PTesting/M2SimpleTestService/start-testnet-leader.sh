@@ -2,4 +2,4 @@
 
 ./new_run_header.sh
 
-nohup ./factomd -blktime=60 -netdebug=2 >>runlog.txt 2>&1 &
+nohup ./factomd -blktime=60 -netdebug=1 >>runlog.txt 2>&1 &
