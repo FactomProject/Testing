@@ -27,7 +27,6 @@ function update {
   scp $2 $1:~/start.sh
   scp ../new_run_header.sh $1:~/
   scp ../r $1:~/
-  scp -r ../../../../factomd/controlPanel/Web $1:~/.factom/m2/
   echo "Removing previous log file."
   ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 }
@@ -56,6 +55,8 @@ if [ $? -eq 0 ]; then
     echo "Updating all the servers...."
 
     cd $CWD
+    
+   ./stop.sh
 
     echo "Setup the leaders..."
     update tda $leaderStart
