@@ -2,12 +2,12 @@
 
 echo "Stopping the network."
 
-function stop {
+function godo {
   echo "Stopping $1"
   ssh -n $1 './stop.sh'
 }
 
-stop tda
-stop tdb
-stop tdc
-stop tdd
+godo tda
+godo tdb
+godo tdc
+godo tdd
