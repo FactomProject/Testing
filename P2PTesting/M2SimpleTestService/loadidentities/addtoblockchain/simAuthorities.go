@@ -177,7 +177,7 @@ func authorityToBlockchain(total int) ([]hardCodedAuthority, int, error) {
 			fmt.Println(err)
 		}
 		s := chainHeadResponse.String()
-		if !strings.Contains(s, "Missing") {
+		if !strings.Contains(s, "Missing") && !onlyConfigs {
 			skipped++
 			continue
 		}
@@ -187,6 +187,7 @@ func authorityToBlockchain(total int) ([]hardCodedAuthority, int, error) {
 		for i, mes := range ele.ChainReveals {
 			entry, err := getFactomPackageEntryFromString(mes)
 			if err != nil {
+				fmt.Println(err)
 				continue
 			}
 			paramsRev := new(wsapi.EntryRequest)
@@ -525,6 +526,9 @@ func getKeysFromAuth(auth hardCodedAuthority) (string, string) {
 }
 
 func v2Request(req *primitives.JSON2Request) (*primitives.JSON2Response, error) {
+	if onlyConfigs {
+		return nil, nil
+	}
 	j, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
