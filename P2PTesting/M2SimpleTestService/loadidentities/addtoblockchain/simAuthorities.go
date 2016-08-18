@@ -134,7 +134,7 @@ func buildMainChain() {
 	e := new(factom.Entry)
 	e.ExtIDs = make([][]byte, 2)
 	e.ExtIDs[0] = []byte("Factom Identity Registration Chain")
-	e.ExtIDs[1] = []byte("10056011560")
+	e.ExtIDs[1] = []byte("44079090249")
 	c := factom.NewChain(e)
 
 	com, rev := getMessageStringChain(c, ec)
@@ -321,7 +321,7 @@ func makeBTCKey(ele hardCodedAuthority, ec *factom.ECAddress) (string, string, *
 
 func getMessageStringEntry(e *factom.Entry, ec *factom.ECAddress) (string, string) {
 	if e.ChainID == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" {
-		e.ChainID = "1d1d1d1d07714fea910f9c6e42e5dc072c86491a3d80418855a2499e85b0039f"
+		e.ChainID = "888888001750ede0eff4b05f0c3f557890b256450cabbb84cada937f9c258327"
 	}
 	j, err := factom.ComposeEntryCommit(e, ec)
 	if err != nil {
