@@ -1,2 +1,2 @@
 #!/bin/bash +x
-tail -f runlog.txt | grep "DB: "
+tail -f runlog.txt | grep -B 3 -A 11 "InMsgQueue"

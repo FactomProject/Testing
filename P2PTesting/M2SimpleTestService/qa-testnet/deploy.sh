@@ -83,7 +83,7 @@ if [ $? -eq 0 ]; then
     echo "Load the identities"
     cd ../loadidentities
 
-    HOST=52.161.31.205:8088
+    HOST=52.161.27.174:8088
 
     ### Make identities eligible to be promoted
     #                #Idents   Host     
