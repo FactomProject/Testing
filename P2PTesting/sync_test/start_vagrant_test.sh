@@ -1,4 +1,4 @@
-#!/usr/files/env bash
+#!/usr/bin/env bash
 
 echo "This sets up vagrant boxes, builds factomd, installs it, and then runs it."
 
