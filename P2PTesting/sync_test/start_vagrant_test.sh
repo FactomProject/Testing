@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
 
   # echo "Start the Vagrant boxes"
   # vagrant reload --provision
-  vagrant up
+  vagrant restart
   
   echo "About to delete .factom"
   ssh -n leader "rm -rf ~/.factom"
@@ -40,10 +40,6 @@ if [ $? -eq 0 ]; then
   ssh -n leader "cd /vagrant/bin/ && ./leader.sh" 
 
   # ssh -n leader "nohup /vagrant/bin/factomd -peers=\"10.0.99.2:8110\" -networkPort=8110 -network=LOCAL -blktime=20 -netdebug=1 -exclusive=true >> /vagrant/output/leader.out 2>&1 & "
-
-  echo "Start the wallet on leader"
-  ssh -n leader "cd /vagrant/bin/ && ./wallet.sh"  
-
   echo "Sleep while waiting for the leader to make blocks."
   sleep 60
 

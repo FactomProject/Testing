@@ -12,12 +12,14 @@ git
 # Database files
 *.db
 *-output
+*.out
 
 # Folders
 _obj
 _test
 bin
 pkg
+.vagrant
 
 # Architecture specific extensions/prefixes
 *.[568vq]
