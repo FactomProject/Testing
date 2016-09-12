@@ -1,0 +1,3 @@
+#!/bin/bash +x
+tail -f follower.out leader.out | grep -B 3 -A 11 "InMsgQueue" 
+
