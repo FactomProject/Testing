@@ -17,10 +17,20 @@ if [ $? -eq 0 ]; then
   echo "changing directory to back to Vagrant Root ( $CWD )"
   cd $CWD
 
-  # echo "Start the Vagrant boxes"
-  # vagrant reload --provision
-  vagrant restart
+  echo "Bounce the boxes to make sure they are in a good state."
+  vagrant halt
+  sleep 2
+  vagrant up
   
+  echo "Leader Timestamp:"
+  ssh leader "date"
+  echo "Follower Timestamp:"
+  ssh follower "date"
+
+  echo "About to delete .factom"
+  ssh -n leader "pkill factomdl; pkill factom-walletd; pkill factom-cli"
+  ssh -n follower "pkill factomdl; pkill factom-walletd; pkill factom-cli"
+
   echo "About to delete .factom"
   ssh -n leader "rm -rf ~/.factom"
   ssh -n follower "rm -rf ~/.factom"
@@ -39,6 +49,10 @@ if [ $? -eq 0 ]; then
   echo "Start the leader"
   ssh -n leader "cd /vagrant/bin/ && ./leader.sh" 
 
+  sleep 10
+  echo "Start the wallet"
+  ssh -n leader "cd /vagrant/bin/ && ./wallet.sh" 
+
   # ssh -n leader "nohup /vagrant/bin/factomd -peers=\"10.0.99.2:8110\" -networkPort=8110 -network=LOCAL -blktime=20 -netdebug=1 -exclusive=true >> /vagrant/output/leader.out 2>&1 & "
   echo "Sleep while waiting for the leader to make blocks."
   sleep 60
@@ -52,8 +66,8 @@ if [ $? -eq 0 ]; then
 # to remove the modifications:
 # sudo tc qdisc del dev eth0 root
 
-  # echo "Turn on latency on the follower"
-  # ssh -n follower "sudo tc qdisc add dev enp0s3 root netem delay 400ms"
+  echo "Turn on latency on the follower"
+  ssh -n follower "sudo tc qdisc add dev enp0s3 root netem delay 400ms"
 
   echo "Start the follower"
   ssh -n follower "cd /vagrant/bin/ && ./follower.sh"
