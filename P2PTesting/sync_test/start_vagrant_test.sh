@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/files/env bash
 
 echo "This sets up vagrant boxes, builds factomd, installs it, and then runs it."
 
 CWD=`pwd`
-DEST="$CWD/bin/factomd"
+DEST="$CWD/files/factomd"
 echo "changing directory to factomd"
 
 cd "$GOPATH/src/github.com/FactomProject/factomd"
@@ -11,7 +11,7 @@ cd "$GOPATH/src/github.com/FactomProject/factomd"
 echo "Building linux factomd and putting it in $DEST"
 CGO_ENABLED=0 GOOS=linux go build -ldflags "-X github.com/FactomProject/factomd/engine.Build=`git rev-parse HEAD`" -installsuffix cgo -o $DEST
 if [ $? -eq 0 ]; then
-  echo "was binary updated? Current:`date`"
+  echo "was filesary updated? Current:`date`"
   ls -G -lh $DEST
 
   echo "changing directory to back to Vagrant Root ( $CWD )"
@@ -43,44 +43,43 @@ if [ $? -eq 0 ]; then
   ssh -n follower "mkdir ~/.factom/m2"
 
   echo "Copying factomd.conf to ~/.factom/m2"
-  ssh -n leader "cp /vagrant/bin/factomd.conf ~/.factom/m2"
-  ssh -n follower "cp /vagrant/bin/factomd.conf ~/.factom/m2"
+  ssh -n leader "cp /vagrant/files/factomd.conf ~/.factom/m2"
+  ssh -n follower "cp /vagrant/files/factomd.conf ~/.factom/m2"
 
   echo "Start the leader"
-  ssh -n leader "cd /vagrant/bin/ && ./leader.sh" 
+  ssh -n leader "cd /vagrant/files/ && ./leader.sh" 
 
   sleep 10
   echo "Start the wallet"
-  ssh -n leader "cd /vagrant/bin/ && ./wallet.sh" 
+  ssh -n leader "cd /vagrant/files/ && ./wallet.sh" 
 
-  # ssh -n leader "nohup /vagrant/bin/factomd -peers=\"10.0.99.2:8110\" -networkPort=8110 -network=LOCAL -blktime=20 -netdebug=1 -exclusive=true >> /vagrant/output/leader.out 2>&1 & "
   echo "Sleep while waiting for the leader to make blocks."
-  sleep 60
+  sleep 600
 
   echo "Add entries"
-  ssh -n leader "cd /vagrant/bin/ && ./entries.sh"  
+  ssh -n leader "cd /vagrant/files/ && ./entries.sh"  
 
   echo "Sleep while waiting for the leader to make blocks."
-  sleep 60
+  sleep 600
 
-# to remove the modifications:
-# sudo tc qdisc del dev eth0 root
+  # echo "Turn off latency on the follower"
+  # sudo -n follower "tc qdisc del dev eth0 root"
 
   echo "Turn on latency on the follower"
   ssh -n follower "sudo tc qdisc add dev enp0s3 root netem delay 400ms"
 
   echo "Start the follower"
-  ssh -n follower "cd /vagrant/bin/ && ./follower.sh"
+  ssh -n follower "cd /vagrant/files/ && ./follower.sh"
+
+  echo "Block Heights. CTRL-C to quit."
 
   while true ;
   do
-    echo "Block Heights. CTRLto quit."
-    echo "Leader:"
-    ssh -n leader "/vagrant/bin/factom-cli get height"  
-    echo "Follower:"
-    ssh -n follower "/vagrant/bin/factom-cli get height"  
-    sleep 5
-    done
+    L="$(ssh -n leader "/vagrant/files/factom-cli get height")"
+    F="$(ssh -n follower "/vagrant/files/factom-cli get height")"
+    echo "Leader: ${L} Follower: ${F}"
+    sleep 2
+  done
 
 fi
 
