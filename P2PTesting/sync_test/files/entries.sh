@@ -93,31 +93,31 @@ ChainID[20]=bbaa38fbfb0ba18456e631df41b488662d69c84f4f55463f5ad28121a939f678
 
 #factom-cli addentry to each of the chains
 for j in $(seq 100); do
-for i in $(seq 20); do
-echo "---------------------------------"
-echo "Getting all entries before adding the entry $i" 
-echo "---------------------------------"
-factom-cli get allentries ${ChainID[i]}
-echo "Making entries into chain $i" 
-echo "---------------------------------"
-echo $i-$j $RANDOM | factom-cli addentry -c ${ChainID[i]} ${ec[i]}
-echo $i-$j $RANDOM | factom-cli addentry -c ${ChainID[i]} ${ec[i]}
-echo "---------------------------------"
-echo "Getting all entries after adding the entry $i"  
+    for i in $(seq 20); do
+        echo "---------------------------------"
+        echo "Getting all entries before adding the entry $i" 
+        echo "---------------------------------"
+        ./factom-cli get allentries ${ChainID[i]}
+        echo "Making entries into chain $i" 
+        echo "---------------------------------"
+        echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
+        echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
+        echo "---------------------------------"
+        echo "Getting all entries after adding the entry $i"  
 
-factom-cli get allentries ${ChainID[i]}
-echo "---------------------------------"
-sleep 1s
+        ./factom-cli get allentries ${ChainID[i]}
+        echo "---------------------------------"
+        sleep 1s
+    done
+    echo "current head details"
+    echo "---------------------------------"
+    ./factom-cli get head
+    sleep 1s
 done
-echo "current head details"
-echo "---------------------------------"
-factom-cli get head
-sleep 1s
-done
 
 
 for i in $(seq 20); do
-echo "chainid - " $i
-factom-cli get allentries ${ChainID[i]}
-factom-cli get chainhead ${ChainID[i]}
+    echo "chainid - " $i
+    ./factom-cli get allentries ${ChainID[i]}
+    ./factom-cli get chainhead ${ChainID[i]}
 done

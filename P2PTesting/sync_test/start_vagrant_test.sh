@@ -54,13 +54,13 @@ if [ $? -eq 0 ]; then
   ssh -n leader "cd /vagrant/files/ && ./wallet.sh" 
 
   echo "Sleep while waiting for the leader to make blocks."
-  sleep 600
+  sleep 100
 
   echo "Add entries"
   ssh -n leader "cd /vagrant/files/ && ./entries.sh"  
 
   echo "Sleep while waiting for the leader to make blocks."
-  sleep 600
+  sleep 100
 
   # echo "Turn off latency on the follower"
   # sudo -n follower "tc qdisc del dev eth0 root"
