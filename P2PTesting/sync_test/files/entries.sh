@@ -51,6 +51,7 @@ echo $i
 ./factom-cli newtx t1
 ./factom-cli addtxinput t1 FA2jK2HcLnRdS94dEcU27rF3meoJfpUcZPSinpb7AwQvPRY6RL1Q 1
 ./factom-cli addtxecoutput t1 ${ec[i]} 1
+
 ./factom-cli addtxfee t1 FA2jK2HcLnRdS94dEcU27rF3meoJfpUcZPSinpb7AwQvPRY6RL1Q
 ./factom-cli signtx t1
 ./factom-cli sendtx t1
