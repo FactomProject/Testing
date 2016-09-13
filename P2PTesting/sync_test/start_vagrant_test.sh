@@ -57,7 +57,7 @@ if [ $? -eq 0 ]; then
   sleep 100
 
   echo "Add entries"
-  ssh -n leader "cd /vagrant/files/ && ./entries.sh"  
+  ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
 
   echo "Sleep while waiting for the leader to make blocks."
   sleep 100
