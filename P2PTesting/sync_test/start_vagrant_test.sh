@@ -56,8 +56,8 @@ if [ $? -eq 0 ]; then
   echo "Sleep while waiting for the leader to make blocks."
   sleep 100
 
-  echo "Add entries"
-  ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
+  #echo "Add entries"
+  #ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
 
   echo "Sleep while waiting for the leader to make blocks."
   sleep 100
@@ -71,6 +71,12 @@ if [ $? -eq 0 ]; then
   echo "Start the follower"
   ssh -n follower "cd /vagrant/files/ && ./follower.sh"
 
+  echo "Start the wallet"
+  ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
+
+  echo "Add entries"
+  ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
+
   echo "Block Heights. CTRL-C to quit."
 
   while true ;
@@ -82,7 +88,6 @@ if [ $? -eq 0 ]; then
   done
 
 fi
-
 
 # Simulate 1 second delay with 25% packet loss:
 # sudo tc qdisc add dev eth0 root netem delay 1000ms loss 25%
