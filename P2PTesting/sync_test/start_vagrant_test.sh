@@ -75,23 +75,21 @@ if [ $? -eq 0 ]; then
   echo "Start the follower"
   ssh -n follower "cd /vagrant/files/ && ./follower.sh"
 
-  # echo "Start the wallet"
-  # ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
+  echo "Start the wallet"
+  ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
 
-  # echo "Add entries"
-  # ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
+  echo "Add entries"
+  ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
 
   echo "Block Heights. CTRL-C to quit."
 
-  while true ;
-  do
+ for i in $(seq 100); do
     date
     L="$(ssh -n leader "/vagrant/files/factom-cli get height")"
     F="$(ssh -n follower "/vagrant/files/factom-cli get height")"
     echo "Leader: ${L} Follower: ${F}"
     sleep 2
   done
-
 fi
 
 # Simulate 1 second delay with 25% packet loss:

@@ -46,7 +46,7 @@ function messages {
 
 echo "Filtering and sorting..."
 
-cat output/follower.out output/leader.out | grep '^ParcelTrace, ' | sort -f > output/message_traces.out
+cat output/follower.out output/leader.out | grep '^ParcelTrace, '  > output/message_traces.out
 
 echo "analyzing..."
 
