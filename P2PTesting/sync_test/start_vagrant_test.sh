@@ -64,10 +64,10 @@ if [ $? -eq 0 ]; then
   sleep 100
 
   # echo "Turn off latency on the follower"
-  # sudo -n follower "tc qdisc del dev eth0 root"
+  # sudo -n follower "sudo tc qdisc del dev eth0 root"
 
   echo "Turn on latency on the follower"
-  ssh -n follower "sudo tc qdisc add dev enp0s3 root netem delay 400ms"
+  ssh -n follower "sudo tc qdisc add dev eth0 root netem delay 400ms"
 
   echo "Start the follower"
   ssh -n follower "cd /vagrant/files/ && ./follower.sh"
