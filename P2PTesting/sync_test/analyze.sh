@@ -1,8 +1,5 @@
 #!/bin/bash
 
-TMPDIR="/tmp/factomd-p2p-test-build"
-mkdir $TMPDIR
-
 # do the grep
 # $1=file $2=id $3=stage
 function counts {
@@ -20,12 +17,14 @@ function stages {
     counts $1 $2 "d"
     counts $1 $2 "e"
     counts $1 $2 "f"
-    counts $1 $2 "g"
-    counts $1 $2 "h"
-    counts $1 $2 "i"
-    counts $1 $2 "j"
-    counts $1 $2 "k"
-    counts $1 $2 "l"
+    counts $1 $2 "G"
+    counts $1 $2 "H"
+    counts $1 $2 "I"
+    counts $1 $2 "J"
+    counts $1 $2 "K"
+    counts $1 $2 "L"
+    counts $1 $2 "M"
+    counts $1 $2 "N"
 }
 
 # Iterate the messages
@@ -33,9 +32,9 @@ function stages {
 function messages {
     stages $1 "0" "EOM_MSG"
     stages $1 "1" "ACK_MSG"
-    stages $1 "8" "EOM_TIMEOUT_MSG"
-    stages $1 "10" "HEARTBEAT_MSG"
-    stages $1 "14" "REQUEST_BLOCK_MSG"
+    # stages $1 "8" "EOM_TIMEOUT_MSG"
+    # stages $1 "10" "HEARTBEAT_MSG"
+    # stages $1 "14" "REQUEST_BLOCK_MSG"
     stages $1 "16" "MISSING_MSG"
     stages $1 "17" "MISSING_DATA"
     stages $1 "18" "DATA_RESPONSE"
@@ -45,14 +44,10 @@ function messages {
 }
 
 
-../process_cluster_test.sh > $TMPDIR/pct.out
-
 echo "Filtering and sorting..."
 
-cat $TMPDIR/pct.out | grep '^ParcelTrace, ' | sort -f > $TMPDIR/messages.out
+cat output/follower.out output/leader.out | grep '^ParcelTrace, ' | sort -f > output/message_traces.out
 
 echo "analyzing..."
 
-tail -10000 $TMPDIR/pct.out | grep -B 3 -A 11 "InMsgQueue"
-
-messages $TMPDIR/pct.out
+messages output/message_traces.out
