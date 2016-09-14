@@ -67,10 +67,19 @@ if [ $? -eq 0 ]; then
   sleep 300
 
   # echo "Turn off latency on the follower"
-  # sudo -n follower "sudo tc qdisc del dev eth0 root"
+  # ssh -n follower "sudo tc qdisc del dev eth0 root"
+  # ssh -n follower "sudo tc qdisc del dev eth1 root"
 
   echo "Turn on latency on the follower"
+  # Hit both network interfaces, because the NAT and private/host only seem to change between create/destroy.
+  ssh -n follower "sudo tc qdisc add dev eth1 root netem delay 400ms"
   ssh -n follower "sudo tc qdisc add dev eth0 root netem delay 400ms"
+
+  echo "Follower to leader Ping:"
+  ssh -n follower "ping -c 3 10.0.99.3"
+
+  echo "Leader to follower Ping:"
+  ssh -n leader "ping -c 3 10.0.99.2"
 
   echo "Start the follower"
   ssh -n follower "cd /vagrant/files/ && ./follower.sh"
@@ -81,8 +90,15 @@ if [ $? -eq 0 ]; then
   echo "Add entries"
   ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
 
-  echo "Block Heights. CTRL-C to quit."
+  echo "Verify entries were entered:"
 
+  # ssh -n follower "/vagrant/files/factom-cli listaddresses"
+  ssh -n leader "/vagrant/files/factom-cli listaddresses"
+  ssh -n leader "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
+  # ssh -n follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
+
+
+  echo "Block Heights. CTRL-C to quit."
  for i in $(seq 100); do
     date
     L="$(ssh -n leader "/vagrant/files/factom-cli get height")"
