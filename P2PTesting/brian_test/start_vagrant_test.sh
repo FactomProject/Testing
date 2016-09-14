@@ -2,6 +2,30 @@
 
 echo "This sets up vagrant boxes, builds factomd, installs it, and then runs it."
 
+$leader="brian_leader"
+$follower="brian_follower"
+
+# reset_dot_factom MachineAlias 
+function reset_dot_factom {
+  echo "Stop factomd etc on $1."
+  ssh -n $1 "pkill factomd; pkill factom-walletd; pkill factom-cli"
+  echo "resetting ~/.factom on $1."
+  ssh -n $1 "rm -rf ~/.factom"
+  ssh -n $1 "mkdir ~/.factom"
+  ssh -n $1 "mkdir ~/.factom/m2"
+  ssh -n $1 "cp /vagrant/files/factomd.conf ~/.factom/m2"
+}
+
+# sleep_with_dots time_in_seconds
+function sleep_with_dots {
+  printf "Sleeping for %1 seconds.\n"
+  for i in $(seq $1); do
+    printf "."
+    sleep 1
+  done
+}
+
+
 echo "clean up output from previous run.  Deleting all files named *.out in output directory"
 rm output/*.out
 
@@ -22,89 +46,78 @@ if [ $? -eq 0 ]; then
 
   echo "Bounce the boxes to make sure they are in a good state."
   vagrant halt
-  sleep 2
+  sleep_with_dots 2
   vagrant up
   
-  echo "Leader Timestamp:"
-  ssh leader "date"
-  echo "Follower Timestamp:"
-  ssh follower "date"
+  echo "$leader Timestamp:"
+  ssh $leader "date"
+  echo "$follower Timestamp:"
+  ssh $follower "date"
 
-  echo "About to delete .factom"
-  ssh -n leader "pkill factomdl; pkill factom-walletd; pkill factom-cli"
-  ssh -n follower "pkill factomdl; pkill factom-walletd; pkill factom-cli"
+  reset_dot_factom $leader
+  reset_dot_factom $follower
+  
+  echo "Start the $leader"
+  ssh -n $leader "cd /vagrant/files/ && ./leader.sh" 
 
-  echo "About to delete .factom"
-  ssh -n leader "rm -rf ~/.factom"
-  ssh -n follower "rm -rf ~/.factom"
+  echo "Start the $follower"
+  ssh -n $follower "cd /vagrant/files/ && ./follower.sh"
 
-  echo "About to create .factom"
-  ssh -n leader "mkdir ~/.factom"
-  ssh -n follower "mkdir ~/.factom"
+  sleep 20
 
-  echo "About to create .factom/m2"
-  ssh -n leader "mkdir ~/.factom/m2"
-  ssh -n follower "mkdir ~/.factom/m2"
+  echo "Start the wallet on $leader"
+  ssh -n $leader "cd /vagrant/files/ && ./wallet.sh" 
 
-  echo "Copying factomd.conf to ~/.factom/m2"
-  ssh -n leader "cp /vagrant/files/factomd.conf ~/.factom/m2"
-  ssh -n follower "cp /vagrant/files/factomd.conf ~/.factom/m2"
+  echo "Start the wallet on $follower"
+  ssh -n $follower "cd /vagrant/files/ && ./wallet.sh" 
 
-  echo "Start the leader"
-  ssh -n leader "cd /vagrant/files/ && ./leader.sh" 
+  echo "Sleep while waiting for the $leader to make blocks."
+  sleep_with_dots 300
 
-  sleep 10
-  echo "Start the wallet"
-  ssh -n leader "cd /vagrant/files/ && ./wallet.sh" 
+  echo "Add entries on $follower"
+  ssh -n $follower "cd /vagrant/files/ && ./entries.sh &"  
 
-  echo "Sleep while waiting for the leader to make blocks."
-  sleep 300
+  sleep_with_dots 20
 
-  echo "Add entries"
-  ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
+  echo "Verify entries made it onto $leader blockchain"
+  # ssh -n $follower "/vagrant/files/factom-cli listaddresses"
+  ssh -n $leader "/vagrant/files/factom-cli listaddresses"
+  ssh -n $leader "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
+  # ssh -n $follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
 
-  echo "Sleep while waiting for the leader to make blocks."
-  sleep 300
+  echo "Sleep while waiting for the $leader to make blocks."
+  sleep_with_dots 300
 
-  # echo "Turn off latency on the follower"
-  # ssh -n follower "sudo tc qdisc del dev eth0 root"
-  # ssh -n follower "sudo tc qdisc del dev eth1 root"
+  echo "Now going to reset the follower to check catchup time."
+  reset_dot_factom $follower
 
-  echo "Turn on latency on the follower"
+  # echo "Turn off latency on the $follower"
+  # ssh -n $follower "sudo tc qdisc del dev eth0 root"
+  # ssh -n $follower "sudo tc qdisc del dev eth1 root"
+
+  echo "Turn on latency on the $follower"
   # Hit both network interfaces, because the NAT and private/host only seem to change between create/destroy.
-  ssh -n follower "sudo tc qdisc add dev eth1 root netem delay 400ms"
-  ssh -n follower "sudo tc qdisc add dev eth0 root netem delay 400ms"
+  ssh -n $follower "sudo tc qdisc add dev eth1 root netem delay 400ms"
+  ssh -n $follower "sudo tc qdisc add dev eth0 root netem delay 400ms"
 
-  echo "Follower to leader Ping:"
-  ssh -n follower "ping -c 3 10.0.99.3"
+  echo "$follower to $leader Ping:"
+  ssh -n $follower "ping -c 3 10.0.99.3"
 
-  echo "Leader to follower Ping:"
-  ssh -n leader "ping -c 3 10.0.99.2"
+  echo "$leader to $follower Ping:"
+  ssh -n $leader "ping -c 3 10.0.99.2"
 
-  echo "Start the follower"
-  ssh -n follower "cd /vagrant/files/ && ./follower.sh"
+  echo "Start the $follower"
+  ssh -n $follower "cd /vagrant/files/ && ./follower.sh"
 
-  echo "Start the wallet"
-  ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
-
-  echo "Add entries"
-  ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
-
-  echo "Verify entries were entered:"
-
-  # ssh -n follower "/vagrant/files/factom-cli listaddresses"
-  ssh -n leader "/vagrant/files/factom-cli listaddresses"
-  ssh -n leader "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
-  # ssh -n follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
-
+  echo "Observe the time the follower takes to catch up."
 
   echo "Block Heights. CTRL-C to quit."
  for i in $(seq 100); do
-    date
-    L="$(ssh -n leader "/vagrant/files/factom-cli get height")"
-    F="$(ssh -n follower "/vagrant/files/factom-cli get height")"
-    echo "Leader: ${L} Follower: ${F}"
-    sleep 2
+    printf "$(date) - "
+    L="$(ssh -n $leader "/vagrant/files/factom-cli get height")"
+    F="$(ssh -n $follower "/vagrant/files/factom-cli get height")"
+    printf "$leader: ${L} $follower: ${F} \n"
+    sleep 1
   done
 fi
 

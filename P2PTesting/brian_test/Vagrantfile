@@ -10,12 +10,12 @@ Vagrant.configure("2") do |config|
   # factom work here:
   config.vm.box = "ubuntu/trusty64"
 
-  config.vm.define "leader" do |leader|
-    leader.vm.network "private_network", ip: "10.0.99.3"
+  config.vm.define "brian_leader" do |leader|
+    brian_leader.vm.network "private_network", ip: "10.0.88.2"
   end
 
-  config.vm.define "follower" do |follower|
-    follower.vm.network "private_network", ip: "10.0.99.2"
+  config.vm.define "brian_follower" do |follower|
+    brian_leader.vm.network "private_network", ip: "10.0.88.3"
   end
 
   # end factom work.
