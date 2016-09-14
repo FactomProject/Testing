@@ -1,0 +1,2 @@
+#!/bin/bash +x
+tail -f leader.out follower.out | grep -B 2 -A 15 "Network Controller Status Report"
