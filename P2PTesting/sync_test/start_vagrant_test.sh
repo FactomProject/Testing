@@ -34,6 +34,7 @@ if [ $? -eq 0 ]; then
   echo "About to delete .factom"
   ssh -n leader "rm -rf ~/.factom"
   ssh -n follower "rm -rf ~/.factom"
+
   echo "About to create .factom"
   ssh -n leader "mkdir ~/.factom"
   ssh -n follower "mkdir ~/.factom"
@@ -54,10 +55,10 @@ if [ $? -eq 0 ]; then
   ssh -n leader "cd /vagrant/files/ && ./wallet.sh" 
 
   echo "Sleep while waiting for the leader to make blocks."
-  sleep 100
+  sleep 120
 
-  #echo "Add entries"
-  #ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
+  echo "Add entries"
+  ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
 
   echo "Sleep while waiting for the leader to make blocks."
   sleep 100
@@ -71,16 +72,17 @@ if [ $? -eq 0 ]; then
   echo "Start the follower"
   ssh -n follower "cd /vagrant/files/ && ./follower.sh"
 
-  echo "Start the wallet"
-  ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
+  # echo "Start the wallet"
+  # ssh -n follower "cd /vagrant/files/ && ./wallet.sh" 
 
-  echo "Add entries"
-  ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
+  # echo "Add entries"
+  # ssh -n follower "cd /vagrant/files/ && ./entries.sh &"  
 
   echo "Block Heights. CTRL-C to quit."
 
   while true ;
   do
+    date
     L="$(ssh -n leader "/vagrant/files/factom-cli get height")"
     F="$(ssh -n follower "/vagrant/files/factom-cli get height")"
     echo "Leader: ${L} Follower: ${F}"

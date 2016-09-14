@@ -67,57 +67,57 @@ echo "hello world" $RANDOM | ./factom-cli addchain -e testing$i -e factom ${ec[i
 sleep 1s
 done
 
+# Commenting out to replicate brians test.
+
+# #assign chainid to variables
+# ChainID[1]=5132d9a8895a3b07d9ee61b856d860029f95947f8b504a1065c90bfdf5de133d
+# ChainID[2]=85d578a3a13999e261f06131235b3549b0d136755d52820e6c8ce14019334900
+# ChainID[3]=292024e2ae4c36acfb9650e6b145f6b60486c118322ceb1dad58d851276715d7
+# ChainID[4]=8f0657e56d8c860aed79f1d965df1ee8a42010fd918390c11394cb6ea39510a0
+# ChainID[5]=d70bc802a0d88df358048c731075a2ee3186d3f9c16c0ef66a61c37b56855712
+# ChainID[6]=991c54538c1a26ca564589327a9087c62a74596d013fbd24a1cb07911b9652bc
+# ChainID[7]=64eefedf8911c56db0bec825deea62d9dd4252b9aeb59adceeeee07132f35be4
+# ChainID[8]=84b6b414704fb3cff43304f11a4609dc919b9142c33b9ab1124e7fbe7462298c
+# ChainID[9]=1b869d24cf0709ea93a04c23c6aea239f3c35ce8a3e51fd6767a6181d37e3e1a
+# ChainID[10]=085cecb8874d10e74987f7262465601421e15abf85410c46b175dc7c053731c7
+# ChainID[11]=5a16f703ffd83ce4816214eb9cff79dd7ce650a6fa393273cbd824ed036dfbbe
+# ChainID[12]=868aa9e374e014cda9c293f1cb4a9f16dc3b28abed1d2141cbc5545bbc3e3e31
+# ChainID[13]=2de808ccfb8db7bb44a8e5722b6655b589079dd9a8ae0fbee2da3370d5d9e13a
+# ChainID[14]=b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3
+# ChainID[15]=58bf7850ef6afe6ef313718afb20429b3f6eb094fe297de5cdf8d08d4ebd3c86
+# ChainID[16]=33d3f40829af1dccf7798a55f3074855dba20a27a1b780cb32f1df849ef94757
+# ChainID[17]=a7576d1b7cae66a083fcd3e2117f35f9b6b217a0c8df6aaa53278215fe70a07f
+# ChainID[18]=b4e0ec762c2372e028e0838542a8134f804e09721fd4460315b03a36e8303489
+# ChainID[19]=f37f3789fdf3c9c73dabf7687cfdb730532c0cce2cebbb962739231c06cdf93f
+# ChainID[20]=bbaa38fbfb0ba18456e631df41b488662d69c84f4f55463f5ad28121a939f678
+
+# #factom-cli addentry to each of the chains
+# for j in $(seq 100); do
+#     for i in $(seq 20); do
+#         echo "---------------------------------"
+#         echo "Getting all entries before adding the entry $i" 
+#         echo "---------------------------------"
+#         ./factom-cli get allentries ${ChainID[i]}
+#         echo "Making entries into chain $i" 
+#         echo "---------------------------------"
+#         echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
+#         echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
+#         echo "---------------------------------"
+#         echo "Getting all entries after adding the entry $i"  
+
+#         ./factom-cli get allentries ${ChainID[i]}
+#         echo "---------------------------------"
+#         sleep 1s
+#     done
+#     echo "current head details"
+#     echo "---------------------------------"
+#     ./factom-cli get head
+#     sleep 1s
+# done
 
 
-#assign chainid to variables
-ChainID[1]=5132d9a8895a3b07d9ee61b856d860029f95947f8b504a1065c90bfdf5de133d
-ChainID[2]=85d578a3a13999e261f06131235b3549b0d136755d52820e6c8ce14019334900
-ChainID[3]=292024e2ae4c36acfb9650e6b145f6b60486c118322ceb1dad58d851276715d7
-ChainID[4]=8f0657e56d8c860aed79f1d965df1ee8a42010fd918390c11394cb6ea39510a0
-ChainID[5]=d70bc802a0d88df358048c731075a2ee3186d3f9c16c0ef66a61c37b56855712
-ChainID[6]=991c54538c1a26ca564589327a9087c62a74596d013fbd24a1cb07911b9652bc
-ChainID[7]=64eefedf8911c56db0bec825deea62d9dd4252b9aeb59adceeeee07132f35be4
-ChainID[8]=84b6b414704fb3cff43304f11a4609dc919b9142c33b9ab1124e7fbe7462298c
-ChainID[9]=1b869d24cf0709ea93a04c23c6aea239f3c35ce8a3e51fd6767a6181d37e3e1a
-ChainID[10]=085cecb8874d10e74987f7262465601421e15abf85410c46b175dc7c053731c7
-ChainID[11]=5a16f703ffd83ce4816214eb9cff79dd7ce650a6fa393273cbd824ed036dfbbe
-ChainID[12]=868aa9e374e014cda9c293f1cb4a9f16dc3b28abed1d2141cbc5545bbc3e3e31
-ChainID[13]=2de808ccfb8db7bb44a8e5722b6655b589079dd9a8ae0fbee2da3370d5d9e13a
-ChainID[14]=b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3
-ChainID[15]=58bf7850ef6afe6ef313718afb20429b3f6eb094fe297de5cdf8d08d4ebd3c86
-ChainID[16]=33d3f40829af1dccf7798a55f3074855dba20a27a1b780cb32f1df849ef94757
-ChainID[17]=a7576d1b7cae66a083fcd3e2117f35f9b6b217a0c8df6aaa53278215fe70a07f
-ChainID[18]=b4e0ec762c2372e028e0838542a8134f804e09721fd4460315b03a36e8303489
-ChainID[19]=f37f3789fdf3c9c73dabf7687cfdb730532c0cce2cebbb962739231c06cdf93f
-ChainID[20]=bbaa38fbfb0ba18456e631df41b488662d69c84f4f55463f5ad28121a939f678
-
-#factom-cli addentry to each of the chains
-for j in $(seq 100); do
-    for i in $(seq 20); do
-        echo "---------------------------------"
-        echo "Getting all entries before adding the entry $i" 
-        echo "---------------------------------"
-        ./factom-cli get allentries ${ChainID[i]}
-        echo "Making entries into chain $i" 
-        echo "---------------------------------"
-        echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
-        echo $i-$j $RANDOM | ./factom-cli addentry -c ${ChainID[i]} ${ec[i]}
-        echo "---------------------------------"
-        echo "Getting all entries after adding the entry $i"  
-
-        ./factom-cli get allentries ${ChainID[i]}
-        echo "---------------------------------"
-        sleep 1s
-    done
-    echo "current head details"
-    echo "---------------------------------"
-    ./factom-cli get head
-    sleep 1s
-done
-
-
-for i in $(seq 20); do
-    echo "chainid - " $i
-    ./factom-cli get allentries ${ChainID[i]}
-    ./factom-cli get chainhead ${ChainID[i]}
-done
+# for i in $(seq 20); do
+#     echo "chainid - " $i
+#     ./factom-cli get allentries ${ChainID[i]}
+#     ./factom-cli get chainhead ${ChainID[i]}
+# done
