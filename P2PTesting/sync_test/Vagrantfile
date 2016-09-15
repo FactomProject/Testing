@@ -18,6 +18,10 @@ Vagrant.configure("2") do |config|
     follower.vm.network "private_network", ip: "10.0.99.2"
   end
 
+  config.vm.define "follower2" do |follower2|
+    follower2.vm.network "private_network", ip: "10.0.99.4"
+  end
+  
   # end factom work.
 
 
