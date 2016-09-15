@@ -2,8 +2,8 @@
 
 echo "This sets up vagrant boxes, builds factomd, installs it, and then runs it."
 
-$leader="brian_leader"
-$follower="brian_follower"
+leader="brian_leader"
+follower="brian_follower"
 
 # reset_dot_factom MachineAlias 
 function reset_dot_factom {
@@ -18,11 +18,12 @@ function reset_dot_factom {
 
 # sleep_with_dots time_in_seconds
 function sleep_with_dots {
-  printf "Sleeping for %1 seconds.\n"
+  printf "Sleeping for $1 seconds.\n"
   for i in $(seq $1); do
     printf "."
     sleep 1
   done
+  echo "\nDone sleeping"
 }
 
 
@@ -72,7 +73,7 @@ if [ $? -eq 0 ]; then
   ssh -n $follower "cd /vagrant/files/ && ./wallet.sh" 
 
   echo "Sleep while waiting for the $leader to make blocks."
-  sleep_with_dots 300
+  sleep_with_dots 900
 
   echo "Add entries on $follower"
   ssh -n $follower "cd /vagrant/files/ && ./entries.sh &"  
@@ -86,7 +87,7 @@ if [ $? -eq 0 ]; then
   # ssh -n $follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
 
   echo "Sleep while waiting for the $leader to make blocks."
-  sleep_with_dots 300
+  sleep_with_dots 900
 
   echo "Now going to reset the follower to check catchup time."
   reset_dot_factom $follower
@@ -101,10 +102,10 @@ if [ $? -eq 0 ]; then
   ssh -n $follower "sudo tc qdisc add dev eth0 root netem delay 400ms"
 
   echo "$follower to $leader Ping:"
-  ssh -n $follower "ping -c 3 10.0.99.3"
+  ssh -n $follower "ping -c 3 10.0.88.2"
 
   echo "$leader to $follower Ping:"
-  ssh -n $leader "ping -c 3 10.0.99.2"
+  ssh -n $leader "ping -c 3 10.0.88.3"
 
   echo "Start the $follower"
   ssh -n $follower "cd /vagrant/files/ && ./follower.sh"
@@ -117,7 +118,6 @@ if [ $? -eq 0 ]; then
     L="$(ssh -n $leader "/vagrant/files/factom-cli get height")"
     F="$(ssh -n $follower "/vagrant/files/factom-cli get height")"
     printf "$leader: ${L} $follower: ${F} \n"
-    sleep 1
   done
 fi
 

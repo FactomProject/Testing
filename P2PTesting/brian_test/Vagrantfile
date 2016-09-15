@@ -8,14 +8,17 @@
 Vagrant.configure("2") do |config|
 
   # factom work here:
+
+  Vagrant.require_version ">= 1.8.5"
+
   config.vm.box = "ubuntu/trusty64"
 
-  config.vm.define "brian_leader" do |leader|
+  config.vm.define "brian_leader" do |brian_leader|
     brian_leader.vm.network "private_network", ip: "10.0.88.2"
   end
 
-  config.vm.define "brian_follower" do |follower|
-    brian_leader.vm.network "private_network", ip: "10.0.88.3"
+  config.vm.define "brian_follower" do |brian_follower|
+    brian_follower.vm.network "private_network", ip: "10.0.88.3"
   end
 
   # end factom work.
