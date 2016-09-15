@@ -60,9 +60,6 @@ if [ $? -eq 0 ]; then
   echo "Sleep while waiting for the leader to make blocks."
   sleep 300
 
-  echo "Add entries"
-  ssh -n leader "cd /vagrant/files/ && ./entries.sh &"  
-
   echo "Sleep while waiting for the leader to make blocks."
   sleep 300
 
@@ -95,7 +92,7 @@ if [ $? -eq 0 ]; then
   # ssh -n follower "/vagrant/files/factom-cli listaddresses"
   ssh -n leader "/vagrant/files/factom-cli listaddresses"
   ssh -n leader "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
-  # ssh -n follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
+  ssh -n follower "/vagrant/files/factom-cli get allentries b69469af5a875cfd50786827e92171a84232bd7a198fa29234ac931e40a342c3"
 
 
   echo "Block Heights. CTRL-C to quit."
