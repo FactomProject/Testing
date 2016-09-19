@@ -91,7 +91,7 @@ if [ $? -eq 0 ]; then
 
     # BlkTime(s)
     echo "Waiting for next block... "
-    sleep 100s
+    sleep 700s
 
     # Promote IDs 0 - 3 to Federated
     sh makeXfeds.sh 0 1 $HOST
