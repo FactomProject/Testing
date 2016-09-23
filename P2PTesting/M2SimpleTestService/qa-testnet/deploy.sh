@@ -87,16 +87,16 @@ if [ $? -eq 0 ]; then
 
     ### Make identities eligible to be promoted
     #                #Idents   Host     
-    sh loadidentities.sh 2 $HOST
+    sh loadidentities.sh 4 $HOST
 
     # BlkTime(s)
     echo "Waiting for next block... "
     sleep 700s
 
     # Promote IDs 0 - 3 to Federated
-    sh makeXfeds.sh 0 1 $HOST
+    sh makeXfeds.sh 0 2 $HOST
 
     # Promote IDs 4-7 to Audit
-    sh makeXauds.sh 2 3 $HOST
+    sh makeXauds.sh 2 4 $HOST
     echo "#### Network Should be UP #####"
 fi
