@@ -27,6 +27,7 @@ function update {
   scp $2 $1:~/start.sh
   scp ../new_run_header.sh $1:~/
   scp ../r $1:~/
+  scp ../n $1:~/
   echo "Removing previous log file."
   ssh -n $1 'echo \"Config Remote Test Box Reset\" > runlog.txt'
 }
