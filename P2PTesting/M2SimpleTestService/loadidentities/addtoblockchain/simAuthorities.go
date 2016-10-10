@@ -226,7 +226,7 @@ func authorityToBlockchain(total int) ([]hardCodedAuthority, int, error) {
 			jCommit := primitives.NewJSON2Request("commit-entry", i, paramsCom)
 			jRev := primitives.NewJSON2Request("reveal-entry", i, paramsRev)
 
-			if !onlyConfigs {
+			if !onlyConfigs && (string(entry.ExtIDs[1]) == "Register Factom Identity" || string(entry.ExtIDs[1]) == "Register Server Management") {
 				_, err = v2Request(jCommit)
 				if err != nil {
 					log.Println("Error in making identities: " + err.Error())
